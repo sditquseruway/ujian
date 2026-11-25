@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jadwal Ujian Santri — SD International Tahfizh Quran</title>
+  <meta name="description" content="Portal Jadwal Ujian Santri SD International Tahfizh Quran dengan pencarian cepat, peta lokasi ujian interaktif, daftar dewan penguji, dan cetak kartu A4." />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            canvas: {
+              light: '#F6F7F5',
+              dark: '#09090B',
+            },
+            surface: {
+              light: '#FFFFFF',
+              dark: '#121216',
+            },
+            brand: {
+              50: '#ECFDF5',
+              100: '#D1FAE5',
+              200: '#A7F3D0',
+              500: '#10B981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065F46',
+              900: '#064E3B',
+            }
+          },
+          boxShadow: {
+            'arc': '0 1px 2px rgba(0,0,0,0.04), 0 8px 24px -6px rgba(15,23,42,0.06)',
+            'arc-hover': '0 4px 12px rgba(0,0,0,0.06), 0 18px 36px -10px rgba(5,150,105,0.14)',
+            'dock': '0 8px 30px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.7)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Motion Primitives & Custom Micro-Interaction Styles (Arc UI, beUI, Bencho inspired) -->
+  <style>
+    :root {
+      --spring-ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --bounce-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Subtle architectural dot grid background */
+    .bg-arc-grid {
+      background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .dark .bg-arc-grid {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    }
+
+    /* Tactile Bencho-style spring button interaction */
+    .tactile-btn {
+      transition: transform 0.2s var(--bounce-ease), background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .tactile-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Arc UI smooth card reveal */
+    @keyframes arcReveal {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .arc-reveal {
+      animation: arcReveal 0.45s var(--spring-ease) both;
+    }
+
+    /* beUI Animated Tab Pill */
+    .tab-pill-indicator {
+      transition: transform 0.38s var(--spring-ease), width 0.38s var(--spring-ease);
+    }
+
+    /* beUI Stacked Toast Animation */
+    @keyframes toastEnter {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.94);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    @keyframes toastExit {
+      from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(40px) scale(0.94);
+      }
+    }
+    .toast-enter {
+      animation: toastEnter 0.35s var(--spring-ease) forwards;
+    }
+    .toast-exit {
+      animation: toastExit 0.25s ease forwards;
+    }
+
+    /* Bencho Stacked Bar Segment Hover */
+    .bar-segment {
+      transition: flex-grow 0.6s var(--spring-ease), filter 0.2s ease, transform 0.2s var(--spring-ease);
+    }
+    .bar-segment:hover {
+      filter: brightness(1.08);
+      transform: scaleY(1.15);
+    }
+
+    /* Highlighted Room Pulse on Interactive Map */
+    @keyframes roomPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+      50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    }
+    .room-highlight {
+      animation: roomPulse 2s infinite;
+    }
+
+    /* Subtle scrollbar refinement */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.28);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.45);
+    }
+
+    /* Modal transitions */
+    .modal-backdrop {
+      transition: opacity 0.25s ease;
+    }
+    .modal-panel {
+      transition: transform 0.32s var(--spring-ease), opacity 0.25s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-canvas-light dark:bg-canvas-dark text-slate-900 dark:text-zinc-100 min-h-screen transition-colors duration-300 bg-arc-grid selection:bg-emerald-500/20 selection:text-emerald-700 dark:selection:text-emerald-300">
+
+  <!-- Ambient Editorial Top Glow (Subtle, Non-Template) -->
+  <div class="pointer-events-none fixed inset-x-0 top-0 h-80 overflow-hidden -z-10">
+    <div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[48rem] h-64 rounded-full bg-gradient-to-r from-emerald-400/15 via-teal-300/15 to-amber-300/15 dark:from-emerald-500/15 dark:via-teal-500/10 dark:to-amber-500/10 blur-3xl"></div>
+  </div>
+
+  <!-- Top Navigation Header (Arc Floating Glass Bar) -->
+  <header class="sticky top-0 z-40 px-3 sm:px-6 pt-3 pb-2">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-center justify-between gap-3 px-3 sm:px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-slate-200/80 dark:border-zinc-800/80 shadow-dock">
+        
+        <!-- Brand Identity -->
+        <button id="brandHomeBtn" class="flex items-center gap-3 text-left group tactile-btn focus:outline-none">
+          <div class="relative w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 flex items-center justify-center overflow-hidden shrink-0">
+            <img
+              src="https://iili.io/fFA80TF.md.png"
+              alt="Logo SD International Tahfizh Quran"
+              class="w-8 h-8 object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');"
+            />
+            <span class="hidden text-emerald-700 dark:text-emerald-400 font-extrabold text-sm">TQ</span>
+          </div>
+          <div class="hidden sm:block leading-tight">
+            <div class="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+              Jadwal Ujian Santri
+            </div>
+            <div class="text-[11px] font-medium text-slate-500 dark:text-zinc-400">
+              SD International Tahfizh Quran
+            </div>
+          </div>
+        </button>
+
+        <!-- beUI Animated Segmented Navigation Tabs (Desktop) -->
+        <nav aria-label="Navigasi Utama" class="hidden md:flex relative items-center p-1 rounded-xl bg-slate-100/90 dark:bg-zinc-800/80 border border-slate-200/60 dark:border-zinc-700/60">
+          <div id="tabIndicator" class="tab-pill-indicator absolute top-1 left-1 h-[calc(100%-8px)] rounded-lg bg-white dark:bg-zinc-900 shadow-sm border border-slate-200/70 dark:border-zinc-700/70 pointer-events-none"></div>
+          <button data-tab="search" class="nav-tab relative z-10 px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors text-slate-900 dark:text-white flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+            Pencarian
+          </button>
+          <button data-tab="teachers" class="nav-tab relative z-10 px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Dewan Penguji
+          </button>
+          <button data-tab="map" class="nav-tab relative z-10 px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+            Denah Lokasi
+          </button>
+        </nav>
+
+        <!-- Action Controls (Bencho Sound Toggle, Print, Admin, Theme) -->
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <!-- Batch Print Button -->
+          <button id="openPrintModalBtn" title="Cetak Kartu Ujian A4" class="tactile-btn inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+            <span class="hidden sm:inline">Cetak</span>
+          </button>
+
+          <!-- Admin Settings Button -->
+          <button id="openAdminModalBtn" title="Panel Admin Pesan Ujian" class="tactile-btn inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-200/70 dark:border-zinc-700/70">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </button>
+
+          <!-- Bencho Micro-Interaction Sound Toggle -->
+          <button id="soundToggleBtn" title="Suara Mikro Interaksi (Bencho Sound)" class="tactile-btn inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-200/70 dark:border-zinc-700/70">
+            <svg id="soundOnIcon" class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+            <svg id="soundOffIcon" class="w-4 h-4 hidden text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path stroke-linecap="round" stroke-linejoin="round" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+          </button>
+
+          <!-- Theme Switcher (Light / Dark) -->
+          <button id="themeToggleBtn" title="Ganti Mode Tema" class="tactile-btn inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-200/70 dark:border-zinc-700/70">
+            <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <svg id="moonIcon" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Bar -->
+      <div class="flex md:hidden items-center justify-between gap-1 mt-2 p-1 rounded-xl bg-white/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-slate-200/80 dark:border-zinc-800/80 shadow-sm">
+        <button data-tab="search" class="mobile-nav-tab flex-1 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white transition-all">Pencarian</button>
+        <button data-tab="teachers" class="mobile-nav-tab flex-1 py-2 text-xs font-semibold rounded-lg text-slate-600 dark:text-zinc-400 transition-all">Dewan Penguji</button>
+        <button data-tab="map" class="mobile-nav-tab flex-1 py-2 text-xs font-semibold rounded-lg text-slate-600 dark:text-zinc-400 transition-all">Denah Lokasi</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="max-w-6xl mx-auto px-3 sm:px-6 pt-4 pb-20">
+
+    <!-- beUI Animated Breadcrumbs Bar (Visible on sub-views) -->
+    <div id="breadcrumbBar" class="hidden mb-4 flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-zinc-400 arc-reveal">
+      <button id="breadcrumbHome" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Beranda
+      </button>
+      <span>/</span>
+      <span id="breadcrumbCurrent" class="text-slate-900 dark:text-white font-semibold truncate"></span>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 1: SEARCH & BENTO OVERVIEW (Arc UI + beUI + Bencho)  -->
+    <!-- ========================================================= -->
+    <section id="viewSearch" class="space-y-6">
+
+      <!-- Hero Command Card -->
+      <div class="relative rounded-3xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-6 sm:p-10 shadow-arc overflow-visible arc-reveal">
+        <div class="max-w-3xl mx-auto text-center">
+          <!-- Live Sync Pill -->
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 mb-4">
+            <span id="syncDot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="syncStatusText">Menyinkronkan Google Sheets...</span>
+            <button id="manualRefreshBtn" title="Refresh data sekarang" class="ml-1 hover:rotate-180 transition-transform duration-500 text-emerald-600 dark:text-emerald-400">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+          </div>
+
+          <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2">
+            Portal Jadwal Ujian Santri
+          </h1>
+          <p class="text-sm sm:text-base text-slate-500 dark:text-zinc-400 max-w-xl mx-auto mb-7">
+            Generasi Quran Siap Berprestasi — Cari nama santri untuk melihat jadwal, ruang ujian, guru penguji, dan denah lokasi secara instan.
+          </p>
+
+          <!-- beUI Command Palette Search Box -->
+          <div id="searchContainer" class="relative max-w-2xl mx-auto text-left">
+            <div class="relative flex items-center group">
+              <div class="absolute left-4 text-slate-400 dark:text-zinc-500 group-focus-within:text-emerald-600 dark:group-focus-within:text-emerald-400 transition-colors pointer-events-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+              </div>
+              <input
+                type="text"
+                id="searchInput"
+                autocomplete="off"
+                placeholder="Ketik minimal 2 huruf nama santri atau kelas..."
+                class="w-full pl-12 pr-24 py-4 text-sm sm:text-base font-medium rounded-2xl bg-slate-50 dark:bg-zinc-900 border-2 border-slate-200 dark:border-zinc-700/80 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:bg-white dark:focus:bg-zinc-950 focus:border-emerald-500 dark:focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all shadow-sm"
+              />
+              <div class="absolute right-3 flex items-center gap-1.5">
+                <button id="clearSearchBtn" class="hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 hover:bg-slate-200/70 dark:hover:bg-zinc-800 transition-colors" title="Bersihkan pencarian">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <kbd class="hidden sm:inline-flex items-center gap-0.5 px-2 py-1 text-[11px] font-mono font-semibold text-slate-400 dark:text-zinc-500 bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-lg shadow-2xs">⌘K</kbd>
+              </div>
+            </div>
+
+            <!-- Live Suggestions Dropdown (beUI Command List) -->
+            <div id="suggestionsList" class="hidden absolute left-0 right-0 mt-2 bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 rounded-2xl shadow-2xl overflow-hidden z-50">
+              <div class="px-3.5 py-2 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-zinc-500">
+                <span id="suggestionCountLabel">Hasil Pencarian</span>
+                <span class="hidden sm:inline">↑↓ navigasi · Enter pilih</span>
+              </div>
+              <div id="suggestionsBody" class="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800/80"></div>
+            </div>
+          </div>
+
+          <!-- Quick Class Filter Pills -->
+          <div id="quickClassFilters" class="mt-4 flex flex-wrap items-center justify-center gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- Offline/Demo Banner (Only visible if Google Sheets CORS/Network fails) -->
+      <div id="fallbackBanner" class="hidden rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-amber-800 dark:text-amber-300">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+          <span>Koneksi ke Google Sheets sedang tidak dapat dijangkau. Menampilkan data pratinjau lokal sementara.</span>
+        </div>
+        <button id="retryFetchBtn" class="tactile-btn px-3 py-1.5 rounded-lg bg-amber-600 text-white font-semibold hover:bg-amber-700">Coba Muat Ulang</button>
+      </div>
+
+      <!-- Bencho & Arc Bento Metrics Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        
+        <!-- Metric 1: Total Santri (Bencho Rolling Counter) -->
+        <div class="md:col-span-4 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-5 shadow-arc hover:shadow-arc-hover transition-all arc-reveal" style="animation-delay: 0.05s">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Total Santri</span>
+            <span class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </span>
+          </div>
+          <div id="statTotalStudents" class="text-3xl font-extrabold font-mono tracking-tight text-slate-900 dark:text-white">0</div>
+          <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Terdaftar pada jadwal aktif</p>
+        </div>
+
+        <!-- Metric 2: Guru Penguji -->
+        <div class="md:col-span-4 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-5 shadow-arc hover:shadow-arc-hover transition-all arc-reveal cursor-pointer group" id="cardGoTeachers" style="animation-delay: 0.1s">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Dewan Penguji</span>
+            <span class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2"/></svg>
+            </span>
+          </div>
+          <div id="statTotalTeachers" class="text-3xl font-extrabold font-mono tracking-tight text-slate-900 dark:text-white">0</div>
+          <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium mt-1 flex items-center gap-1">
+            Lihat jadwal per guru <span>→</span>
+          </p>
+        </div>
+
+        <!-- Metric 3: Ruang Ujian -->
+        <div class="md:col-span-4 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-5 shadow-arc hover:shadow-arc-hover transition-all arc-reveal cursor-pointer group" id="cardGoMap" style="animation-delay: 0.15s">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Ruang Ujian</span>
+            <span class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </span>
+          </div>
+          <div id="statTotalRooms" class="text-3xl font-extrabold font-mono tracking-tight text-slate-900 dark:text-white">0</div>
+          <p class="text-xs text-amber-600 dark:text-amber-400 font-medium mt-1 flex items-center gap-1">
+            Buka peta lokasi ujian <span>→</span>
+          </p>
+        </div>
+
+        <!-- Bencho Interactive Stacked Distribution Bar -->
+        <div class="md:col-span-12 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-5 shadow-arc arc-reveal" style="animation-delay: 0.2s">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-sm font-bold text-slate-900 dark:text-white">Distribusi Santri per Gedung Ujian</h2>
+              <p class="text-xs text-slate-500 dark:text-zinc-400">Proporsi peserta ujian di Gedung K, Gedung M, dan Ruang Lainnya</p>
+            </div>
+            <div id="lastUpdatedBadge" class="text-[11px] font-mono text-slate-400 dark:text-zinc-500">Auto-refresh 30 dtk</div>
+          </div>
+
+          <!-- Stacked Bar -->
+          <div id="buildingStackedBar" class="w-full h-3.5 rounded-full bg-slate-100 dark:bg-zinc-800 overflow-hidden flex gap-1 p-0.5 mb-3">
+            <div class="h-full w-full bg-slate-200 dark:bg-zinc-700 rounded-full animate-pulse"></div>
+          </div>
+
+          <!-- Legend -->
+          <div id="buildingLegend" class="flex flex-wrap items-center gap-4 text-xs text-slate-600 dark:text-zinc-300"></div>
+        </div>
+      </div>
+
+      <!-- Quick Filtered Class Results Grid (Appears when user clicks a class pill) -->
+      <div id="classBrowseSection" class="hidden space-y-3 arc-reveal">
+        <div class="flex items-center justify-between">
+          <h3 id="classBrowseTitle" class="text-sm font-bold text-slate-900 dark:text-white">Daftar Santri</h3>
+          <button id="closeClassBrowseBtn" class="text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white">Tutup filter ✕</button>
+        </div>
+        <div id="classBrowseGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: STUDENT DETAIL BENTO CARD                         -->
+    <!-- ========================================================= -->
+    <section id="viewDetail" class="hidden space-y-5 arc-reveal">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <button id="backFromDetailBtn" class="tactile-btn inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs font-semibold text-slate-700 dark:text-zinc-200 hover:border-emerald-500 shadow-2xs">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Kembali ke Pencarian
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button id="copyScheduleBtn" class="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs font-semibold text-slate-700 dark:text-zinc-200 hover:border-emerald-500 shadow-2xs">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Salin Jadwal
+          </button>
+          <button id="printSingleCardBtn" class="tactile-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+            Cetak Kartu Ini
+          </button>
+        </div>
+      </div>
+
+      <!-- Dynamic Student Detail Bento Layout -->
+      <div id="detailContent"></div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 3: DEWAN GURU PENGUJI (TEACHER DIRECTORY & STUDENTS) -->
+    <!-- ========================================================= -->
+    <section id="viewTeachers" class="hidden space-y-5 arc-reveal">
+      
+      <!-- Teacher Directory Sub-view -->
+      <div id="teacherDirectoryView" class="space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 rounded-2xl p-5 shadow-arc">
+          <div>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">Direktori Penguji</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Dewan Guru Penguji Ujian</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1">Pilih nama guru untuk melihat daftar santri terurut sesuai jadwal, atau cetak absen & TTD orang tua untuk semua/pilihan guru.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full lg:w-auto">
+            <div class="relative flex-1 sm:w-60">
+              <input type="text" id="teacherFilterInput" placeholder="Cari guru atau ruang..." class="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:border-emerald-500" />
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+            </div>
+            <button id="openBatchTeacherPrintBtn" class="tactile-btn inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold shadow-sm shrink-0">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+              Cetak Absen Guru
+            </button>
+          </div>
+        </div>
+
+        <div id="teachersCardGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- Teacher Students Sub-view -->
+      <div id="teacherStudentsView" class="hidden space-y-4 arc-reveal">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <button id="backToTeacherDirectoryBtn" class="tactile-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs font-semibold text-slate-700 dark:text-zinc-200 hover:border-emerald-500">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Daftar Dewan Penguji
+          </button>
+          <button id="printTeacherSheetBtn" class="tactile-btn inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6v-8z"/></svg>
+            Cetak Daftar Hadir & TTD
+          </button>
+        </div>
+
+        <div class="bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 rounded-2xl p-4 sm:p-5 shadow-arc space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-zinc-800">
+            <div>
+              <div id="teacherDetailRoomBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1.5">Ruang -</div>
+              <h3 id="selectedTeacherTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">Nama Guru</h3>
+              <p id="selectedTeacherSubtitle" class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">0 santri terjadwal</p>
+            </div>
+            <div class="relative w-full sm:w-64">
+              <input type="text" id="teacherStudentSearchInput" placeholder="Cari nama santri / kelas..." class="w-full pl-9 pr-3 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:border-emerald-500" />
+              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+            </div>
+          </div>
+
+          <!-- Responsive Mobile Card List (Small Screens) -->
+          <div id="teacherStudentCardsMobile" class="md:hidden space-y-2.5"></div>
+
+          <!-- Desktop / Tablet Structured Table -->
+          <div class="hidden md:block overflow-x-auto -mx-2 px-2">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-zinc-800 text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                  <th class="py-3 px-3 text-center w-12">No</th>
+                  <th class="py-3 px-3">Nama Santri</th>
+                  <th class="py-3 px-3">Tanggal Ujian</th>
+                  <th class="py-3 px-3">Waktu</th>
+                  <th class="py-3 px-3 text-right">Kontak Orang Tua</th>
+                </tr>
+              </thead>
+              <tbody id="teacherStudentTableBody" class="divide-y divide-slate-100 dark:divide-zinc-800/80"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 4: INTERACTIVE EXAM LOCATION MAP                     -->
+    <!-- ========================================================= -->
+    <section id="viewMap" class="hidden space-y-5 arc-reveal">
+      <div class="bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 rounded-2xl p-5 sm:p-7 shadow-arc">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div>
+            <span class="text-[11px] font-mono uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-semibold">Navigasi Area Ujian</span>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-0.5">Denah Ruang & Guru Penguji</h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1">Klik ruang manapun untuk melihat guru penguji dan daftar santri di ruangan tersebut.</p>
+          </div>
+        </div>
+        <div id="fullExamMapContainer"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Minimalist Footer -->
+  <footer class="border-t border-slate-200/70 dark:border-zinc-800/70 py-6 text-center text-xs text-slate-500 dark:text-zinc-500 px-4">
+    <p class="font-medium text-slate-700 dark:text-zinc-300">SD International Tahfizh Quran · Portal Jadwal Ujian Santri</p>
+    <p class="mt-1">Siap Hosting GitHub Pages · Sinkronisasi Google Sheets Otomatis</p>
+  </footer>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1: BATCH PRINT CARDS (2 KARTU PER HALAMAN A4)       -->
+  <!-- ========================================================= -->
+  <div id="printModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-sm modal-backdrop">
+    <div class="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] modal-panel">
+      <div class="px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Cetak Kartu Jadwal Ujian</h3>
+          <p class="text-xs text-slate-500 dark:text-zinc-400">Dilengkapi foto santri · Format 2 kartu per halaman A4 Portrait</p>
+        </div>
+        <button id="closePrintModalBtn" class="tactile-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center shrink-0">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
+        <!-- Search, Class Filter & Bulk Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2">
+          <div class="sm:col-span-5">
+            <select id="printClassFilter" class="w-full px-3.5 py-2.5 text-xs sm:text-sm font-semibold rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-zinc-100 focus:outline-none focus:border-emerald-500">
+              <option value="ALL">Semua Kelas</option>
+            </select>
+          </div>
+          <div class="sm:col-span-7">
+            <input type="text" id="printSearchInput" placeholder="Cari nama santri atau ruang..." class="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:border-emerald-500" />
+          </div>
+        </div>
+
+        <!-- Quick Class Filter Pills + Bulk Select -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div id="printFilterSummary" class="text-[11px] font-medium text-slate-500 dark:text-zinc-400">Menampilkan semua santri</div>
+          <div class="flex flex-wrap gap-1.5">
+            <button id="selectAllPrintBtn" class="tactile-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">Pilih Semua Tampil</button>
+            <button id="deselectFilteredPrintBtn" class="tactile-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300">Batal Tampil</button>
+            <button id="deselectAllPrintBtn" class="tactile-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40">Reset Semua</button>
+          </div>
+        </div>
+
+        <!-- Checklist Container -->
+        <div id="printStudentChecklist" class="space-y-1.5 max-h-72 sm:max-h-80 overflow-y-auto pr-1"></div>
+      </div>
+
+      <div class="px-5 sm:px-6 py-4 border-t border-slate-100 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 flex flex-wrap items-center justify-between gap-3">
+        <div class="text-xs font-semibold text-slate-600 dark:text-zinc-300">
+          Terpilih: <span id="printSelectedCount" class="font-mono text-emerald-600 dark:text-emerald-400 text-sm font-bold">0</span> santri
+        </div>
+        <div class="flex gap-2">
+          <button id="cancelPrintModalBtn" class="tactile-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300">Batal</button>
+          <button id="confirmBatchPrintBtn" class="tactile-btn px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Cetak Sekarang</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 1B: BATCH PRINT ABSEN GURU (PER GURU PENUH / A4)    -->
+  <!-- ========================================================= -->
+  <div id="teacherPrintModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-sm modal-backdrop">
+    <div class="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] modal-panel">
+      <div class="px-5 sm:px-6 py-4 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between gap-3">
+        <div>
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Cetak Absen & TTD Orang Tua (Per Guru)</h3>
+          <p class="text-xs text-slate-500 dark:text-zinc-400">Setiap guru dicetak rapi & penuh pada halaman terpisah (A4 Portrait)</p>
+        </div>
+        <button id="closeTeacherPrintModalBtn" class="tactile-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center shrink-0">✕</button>
+      </div>
+
+      <div class="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
+        <!-- Search & Bulk Actions for Teachers -->
+        <div class="flex flex-col sm:flex-row gap-2">
+          <div class="relative flex-1">
+            <input type="text" id="teacherPrintSearchInput" placeholder="Cari nama guru penguji atau ruang..." class="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 focus:outline-none focus:border-emerald-500" />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+          </div>
+          <div class="flex gap-1.5">
+            <button id="selectAllTeachersPrintBtn" class="tactile-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">Pilih Semua</button>
+            <button id="deselectAllTeachersPrintBtn" class="tactile-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300">Reset</button>
+          </div>
+        </div>
+
+        <!-- Teacher Checklist Container -->
+        <div id="teacherPrintChecklist" class="space-y-1.5 max-h-72 sm:max-h-80 overflow-y-auto pr-1"></div>
+      </div>
+
+      <div class="px-5 sm:px-6 py-4 border-t border-slate-100 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 flex flex-wrap items-center justify-between gap-3">
+        <div class="text-xs font-semibold text-slate-600 dark:text-zinc-300">
+          Terpilih: <span id="teacherPrintSelectedCount" class="font-mono text-emerald-600 dark:text-emerald-400 text-sm font-bold">0</span> guru
+          <span id="teacherPrintStudentTotal" class="text-slate-400 dark:text-zinc-500 font-normal ml-1">(0 santri)</span>
+        </div>
+        <div class="flex gap-2">
+          <button id="cancelTeacherPrintModalBtn" class="tactile-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300">Batal</button>
+          <button id="confirmBatchTeacherPrintBtn" class="tactile-btn px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Cetak Absen Terpilih</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 2: ADMIN PANEL (LOCALSTORAGE PERSISTENCE FOR GITHUB)-->
+  <!-- ========================================================= -->
+  <div id="adminModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/60 backdrop-blur-sm modal-backdrop">
+    <div class="w-full max-w-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] modal-panel">
+      <div class="px-6 py-4 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
+        <div>
+          <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">Panel Admin — Pengaturan Pesan Ujian</h3>
+          <p class="text-xs text-slate-500 dark:text-zinc-400">Tersimpan di browser (localStorage), siap jalan penuh di GitHub Pages</p>
+        </div>
+        <button id="closeAdminModalBtn" class="tactile-btn w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="p-6 space-y-4 overflow-y-auto flex-1">
+        <div>
+          <label for="adminMessageInput" class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-zinc-300 mb-2">
+            Pesan Informasi Ujian (Detail Santri & WhatsApp)
+          </label>
+          <textarea
+            id="adminMessageInput"
+            rows="8"
+            class="w-full p-4 text-xs sm:text-sm font-mono rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-700 text-slate-800 dark:text-zinc-100 focus:outline-none focus:border-emerald-500"
+            placeholder="Tulis pesan informasi ujian di sini..."
+          ></textarea>
+          <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-2">
+            Placeholder dinamis: gunakan <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 font-mono text-emerald-600 dark:text-emerald-400">{ruang}</code> dan <code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 font-mono text-emerald-600 dark:text-emerald-400">{guru}</code>.
+          </p>
+        </div>
+
+        <div class="rounded-2xl bg-slate-50 dark:bg-zinc-950 border border-slate-200/80 dark:border-zinc-800 p-4">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1.5">Status Pesan Aktif</div>
+          <p id="adminStatusPreview" class="text-xs text-slate-600 dark:text-zinc-300 whitespace-pre-wrap leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-100 dark:border-zinc-800 bg-slate-50/70 dark:bg-zinc-950/60 flex flex-wrap items-center justify-between gap-2">
+        <button id="resetAdminMsgBtn" class="tactile-btn px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40">Kembalikan Default</button>
+        <div class="flex gap-2">
+          <button id="cancelAdminModalBtn" class="tactile-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-slate-600 dark:text-zinc-300">Tutup</button>
+          <button id="saveAdminMsgBtn" class="tactile-btn px-5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Simpan Pesan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL 3: FULLSCREEN PHOTO LIGHTBOX                        -->
+  <!-- ========================================================= -->
+  <div id="photoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="relative max-w-2xl w-full flex flex-col items-center">
+      <button id="closePhotoModalBtn" class="tactile-btn absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center text-lg">✕</button>
+      <img id="photoModalImg" src="" alt="Foto Santri" class="max-h-[75vh] w-auto rounded-2xl shadow-2xl object-contain border border-white/10" />
+      <div id="photoModalCaption" class="mt-4 text-center text-white font-semibold text-sm"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- beUI / Bencho STACKED TOAST CONTAINER                     -->
+  <!-- ========================================================= -->
+  <div id="toastStack" class="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 w-[calc(100%-2rem)] max-w-sm pointer-events-none"></div>
+
+  <!-- ========================================================= -->
+  <!-- APPLICATION LOGIC (Clean Modular MVC + Services)          -->
+  <!-- ========================================================= -->
+  <script>
+    /**
+     * =========================================================================
+     * 1. BENCHO MICRO-INTERACTION SOUND ENGINE (Web Audio API - Zero External URL)
+     * =========================================================================
+     */
+    const SoundEngine = (() => {
+      let ctx = null;
+      let enabled = localStorage.getItem('tq_sound_enabled') !== 'false';
+
+      const getContext = () => {
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) ctx = new AudioCtx();
+        }
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => {});
+        }
+        return ctx;
+      };
+
+      const playTone = (freq, duration, type = 'sine', volume = 0.04, endFreq = null) => {
+        if (!enabled) return;
+        try {
+          const audio = getContext();
+          if (!audio) return;
+          const osc = audio.createOscillator();
+          const gain = audio.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audio.currentTime);
+          if (endFreq) {
+            osc.frequency.exponentialRampToValueAtTime(endFreq, audio.currentTime + duration);
+          }
+          gain.gain.setValueAtTime(volume, audio.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audio.destination);
+          osc.start();
+          osc.stop(audio.currentTime + duration);
+        } catch (e) {
+          // Silently ignore audio restriction errors
+        }
+      };
+
+      return {
+        isEnabled: () => enabled,
+        toggle() {
+          enabled = !enabled;
+          localStorage.setItem('tq_sound_enabled', String(enabled));
+          if (enabled) this.pop();
+          return enabled;
+        },
+        click: () => playTone(520, 0.045, 'triangle', 0.03, 380),
+        pop: () => playTone(440, 0.08, 'sine', 0.04, 680),
+        success: () => {
+          playTone(523.25, 0.09, 'sine', 0.04);
+          setTimeout(() => playTone(659.25, 0.14, 'sine', 0.04), 70);
+        },
+        soft: () => playTone(320, 0.05, 'sine', 0.025, 240),
+      };
+    })();
+
+    /**
+     * =========================================================================
+     * 2. beUI STACKED TOAST SYSTEM (Zero alert() / confirm())
+     * =========================================================================
+     */
+    const Toast = (() => {
+      const container = document.getElementById('toastStack');
+      const icons = {
+        success: '<span class="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold">✓</span>',
+        error: '<span class="w-5 h-5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs font-bold">!</span>',
+        warning: '<span class="w-5 h-5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-bold">!</span>',
+        info: '<span class="w-5 h-5 rounded-full bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center text-xs font-bold">i</span>',
+      };
+
+      function show(message, type = 'info', duration = 3200) {
+        const el = document.createElement('div');
+        el.className = 'toast-enter pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-slate-200/90 dark:border-zinc-700/90 shadow-xl text-xs sm:text-sm font-medium text-slate-800 dark:text-zinc-100';
+        el.innerHTML = `
+          ${icons[type] || icons.info}
+          <span class="flex-1 leading-snug">${escapeHtml(message)}</span>
+          <button class="text-slate-400 hover:text-slate-700 dark:hover:text-white text-xs px-1">✕</button>
+        `;
+
+        const dismiss = () => {
+          el.classList.remove('toast-enter');
+          el.classList.add('toast-exit');
+          setTimeout(() => el.remove(), 260);
+        };
+
+        el.querySelector('button').addEventListener('click', dismiss);
+        container.appendChild(el);
+
+        // Keep stack clean (max 4 visible toasts)
+        while (container.children.length > 4) {
+          container.firstChild.remove();
+        }
+
+        if (type === 'success') SoundEngine.success();
+        else SoundEngine.soft();
+
+        setTimeout(dismiss, duration);
+      }
+
+      return { show };
+    })();
+
+    /**
+     * =========================================================================
+     * 3. UTILITY HELPERS & SECURITY SANITIZER
+     * =========================================================================
+     */
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /** Extract field value safely across flexible Google Sheets header naming */
+    function getField(student, keys, fallback = '-') {
+      if (!student) return fallback;
+      for (const key of keys) {
+        if (student[key] && String(student[key]).trim() !== '') {
+          return String(student[key]).trim();
+        }
+      }
+      return fallback;
+    }
+
+    /** Normalize a raw student row into a clean Model object */
+    function normalizeStudent(raw, index) {
+      const firstKey = Object.keys(raw)[0];
+      const nama = getField(raw, ['Nama Siswa', 'Nama', 'nama siswa', 'nama', 'NAMA SISWA', 'NAMA', firstKey]);
+      const kelas = getField(raw, ['Kelas', 'kelas', 'KELAS']);
+      const jadwal = getField(raw, ['Jadwal Ujian (Hari/Tanggal)', 'Jadwal Ujian', 'jadwal ujian', 'JADWAL UJIAN', 'Tanggal Ujian']);
+      const waktu = getField(raw, ['Waktu Ujian', 'waktu ujian', 'WAKTU UJIAN', 'Waktu']);
+      const ruang = getField(raw, ['Ruang Kelas', 'ruang kelas', 'RUANG KELAS', 'Ruang']);
+      const guru = getField(raw, ['Nama Guru Penguji', 'Guru Penguji', 'guru penguji', 'GURU PENGUJI', 'Guru']);
+      const hp = getField(raw, ['Nomor HP', 'nomor hp', 'NOMOR HP', 'No HP', 'HP', 'Telepon']);
+      const rawFoto = getField(raw, ['Foto Siswa', 'foto siswa', 'FOTO SISWA', 'Foto', 'URL Foto', 'url foto'], '');
+
+      let foto = '';
+      if (rawFoto.includes('src=')) {
+        const match = rawFoto.match(/src\s*=\s*["']?([^\s"'<>]+)["']?/i);
+        if (match && match[1]) foto = match[1].trim();
+      } else if (rawFoto.startsWith('http')) {
+        foto = rawFoto;
+      }
+
+      return { id: index, nama, kelas, jadwal, waktu, ruang, guru, hp, foto };
+    }
+
+    /** Parse Indonesian or numeric dates for accurate chronological sorting */
+    function parseExamDateScore(dateStr) {
+      if (!dateStr || dateStr === '-') return 99999999;
+      const monthMap = {
+        januari: 1, februari: 2, maret: 3, april: 4, mei: 5, juni: 6,
+        juli: 7, agustus: 8, september: 9, oktober: 10, november: 11, desember: 12,
+        jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, agu: 8, agt: 8, sep: 9, okt: 10, nov: 11, des: 12
+      };
+
+      const textMatch = dateStr.match(/(\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})/);
+      if (textMatch) {
+        const day = parseInt(textMatch[1], 10);
+        const month = monthMap[textMatch[2].toLowerCase()] || 0;
+        const year = parseInt(textMatch[3], 10);
+        if (month > 0) return year * 10000 + month * 100 + day;
+      }
+
+      const slashMatch = dateStr.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+      if (slashMatch) {
+        const day = parseInt(slashMatch[1], 10);
+        const month = parseInt(slashMatch[2], 10);
+        const year = parseInt(slashMatch[3], 10);
+        return year * 10000 + month * 100 + day;
+      }
+
+      return 99999999;
+    }
+
+    /** Bencho-style Rolling Counter Animation */
+    function animateCounter(el, target) {
+      const start = parseInt(el.textContent.replace(/\D/g, ''), 10) || 0;
+      if (start === target) {
+        el.textContent = target;
+        return;
+      }
+      const duration = 550;
+      const startTime = performance.now();
+
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (target - start) * eased);
+        el.textContent = current;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /** Robust RFC-4180 CSV parser handling multiline/quoted commas */
+    function parseCSV(csvText) {
+      const rows = [];
+      let row = [];
+      let field = '';
+      let insideQuotes = false;
+
+      for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const next = csvText[i + 1];
+
+        if (insideQuotes) {
+          if (char === '"' && next === '"') {
+            field += '"';
+            i++;
+          } else if (char === '"') {
+            insideQuotes = false;
+          } else {
+            field += char;
+          }
+        } else {
+          if (char === '"') {
+            insideQuotes = true;
+          } else if (char === ',') {
+            row.push(field.trim());
+            field = '';
+          } else if (char === '\r' && next === '\n') {
+            row.push(field.trim());
+            rows.push(row);
+            row = [];
+            field = '';
+            i++;
+          } else if (char === '\n' || char === '\r') {
+            row.push(field.trim());
+            rows.push(row);
+            row = [];
+            field = '';
+          } else {
+            field += char;
+          }
+        }
+      }
+      if (field.length > 0 || row.length > 0) {
+        row.push(field.trim());
+        rows.push(row);
+      }
+
+      if (rows.length < 2) return [];
+      const headers = rows[0].map(h => h.replace(/^"|"$/g, '').trim());
+      const objects = [];
+
+      for (let r = 1; r < rows.length; r++) {
+        const values = rows[r];
+        if (!values || values.every(v => !v)) continue;
+        const obj = {};
+        headers.forEach((h, idx) => {
+          obj[h] = (values[idx] || '').replace(/^"|"$/g, '').trim();
+        });
+        if (obj[headers[0]]) objects.push(obj);
+      }
+      return objects;
+    }
+
+    /** Safe Clipboard Copy compatible with iFrame & GitHub Pages */
+    function copyTextToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        Toast.show('Jadwal santri berhasil disalin ke clipboard!', 'success');
+      } catch (err) {
+        Toast.show('Gagal menyalin teks.', 'error');
+      }
+      document.body.removeChild(textarea);
+    }
+
+    /**
+     * =========================================================================
+     * 4. DATA SERVICE / MODEL LAYER (Google Sheets CSV + LocalStorage Admin)
+     * =========================================================================
+     */
+    const DataService = (() => {
+      const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ3jmw8son5_Yig0PwbsH69YeY8nGMK58dylFHIBN9fcmpn5uHzkB0JyObcrRZ1GDTaL2D0UzbohkEf/pub?gid=0&single=true&output=csv';
+      const ADMIN_MSG_KEY = 'tq_custom_exam_message_v2';
+      const LOGO_URL = 'https://iili.io/fFA80TF.md.png';
+
+      const DEFAULT_MESSAGE = `Perhatian Penting untuk Wali Santri:
+• Mohon pastikan ananda hadir TEPAT WAKTU sesuai jadwal yang tertera
+• Ujian dilaksanakan sesuai jadwal masing-masing santri
+• Jika tidak ada jadwal ujian pada hari tertentu, santri belajar di rumah masing-masing
+• Apabila ananda berhalangan hadir, mohon segera menghubungi Wali Kelas untuk koordinasi lebih lanjut
+• Lokasi Ujian: {ruang} · Guru Penguji: {guru}`;
+
+      // Resilient fallback preview dataset if offline or blocked by strict proxy
+      const FALLBACK_DATA = [
+        { 'Nama Siswa': 'Ahmad Fatih Al-Hafizh', 'Kelas': 'Kelas 4A', 'Jadwal Ujian (Hari/Tanggal)': 'Senin, 15 Desember 2026', 'Waktu Ujian': '08:00 - 09:00 WIB', 'Ruang Kelas': 'K1', 'Nama Guru Penguji': 'Ustadz Abdullah, Lc.', 'Nomor HP': '081234567890', 'Foto Siswa': '' },
+        { 'Nama Siswa': 'Aisyah Humaira Azzahra', 'Kelas': 'Kelas 5B', 'Jadwal Ujian (Hari/Tanggal)': 'Senin, 15 Desember 2026', 'Waktu Ujian': '09:00 - 10:00 WIB', 'Ruang Kelas': 'K2', 'Nama Guru Penguji': 'Ustadzah Fatimah, S.Pd.', 'Nomor HP': '081298765432', 'Foto Siswa': '' },
+        { 'Nama Siswa': 'Muhammad Zaki Ramadhan', 'Kelas': 'Kelas 6A', 'Jadwal Ujian (Hari/Tanggal)': 'Selasa, 16 Desember 2026', 'Waktu Ujian': '08:00 - 09:00 WIB', 'Ruang Kelas': 'M1', 'Nama Guru Penguji': 'Ustadz Salman Al-Farisi', 'Nomor HP': '085211223344', 'Foto Siswa': '' },
+        { 'Nama Siswa': 'Naila Syakira Putri', 'Kelas': 'Kelas 3A', 'Jadwal Ujian (Hari/Tanggal)': 'Selasa, 16 Desember 2026', 'Waktu Ujian': '09:30 - 10:30 WIB', 'Ruang Kelas': 'M2', 'Nama Guru Penguji': 'Ustadzah Khadijah, M.Pd.', 'Nomor HP': '081355667788', 'Foto Siswa': '' }
+      ];
+
+      async function fetchStudents() {
+        const cacheBust = Date.now();
+        const response = await fetch(`${SHEET_CSV_URL}&cachebust=${cacheBust}`, {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'no-store'
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+        const parsed = parseCSV(csvText);
+        if (parsed.length === 0) throw new Error('Spreadsheet kosong');
+        return parsed.map((row, idx) => normalizeStudent(row, idx));
+      }
+
+      return {
+        LOGO_URL,
+        DEFAULT_MESSAGE,
+        getFallbackStudents: () => FALLBACK_DATA.map((row, idx) => normalizeStudent(row, idx)),
+        fetchStudents,
+        getCustomMessage: () => localStorage.getItem(ADMIN_MSG_KEY) || '',
+        saveCustomMessage: (msg) => localStorage.setItem(ADMIN_MSG_KEY, msg),
+        resetCustomMessage: () => localStorage.removeItem(ADMIN_MSG_KEY),
+      };
+    })();
+
+    /**
+     * =========================================================================
+     * 5. APPLICATION STATE & CONTROLLER
+     * =========================================================================
+     */
+    const App = {
+      students: [],
+      activeTab: 'search',
+      currentStudent: null,
+      currentTeacherName: null,
+      currentTeacherStudents: [],
+      selectedPrintIds: new Set(),
+      selectedTeacherPrintNames: new Set(),
+      printClassFilterValue: 'ALL',
+      suggestionIndex: -1,
+      activeSuggestions: [],
+      refreshTimer: null,
+      isOfflineDemo: false,
+
+      init() {
+        this.initTheme();
+        this.initSoundUI();
+        this.bindEvents();
+        this.updateTabIndicator();
+        this.loadData(true);
+        this.startAutoRefresh();
+      },
+
+      /* ---------------- Theme Management ---------------- */
+      initTheme() {
+        const saved = localStorage.getItem('tq_theme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const useDark = saved ? saved === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', useDark);
+        this.syncThemeIcons(useDark);
+      },
+
+      toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('tq_theme', isDark ? 'dark' : 'light');
+        this.syncThemeIcons(isDark);
+        SoundEngine.click();
+      },
+
+      syncThemeIcons(isDark) {
+        document.getElementById('sunIcon').classList.toggle('hidden', !isDark);
+        document.getElementById('moonIcon').classList.toggle('hidden', isDark);
+      },
+
+      /* ---------------- Sound Toggle UI ---------------- */
+      initSoundUI() {
+        const on = SoundEngine.isEnabled();
+        document.getElementById('soundOnIcon').classList.toggle('hidden', !on);
+        document.getElementById('soundOffIcon').classList.toggle('hidden', on);
+      },
+
+      /* ---------------- Data Loading & Auto Refresh ---------------- */
+      async loadData(initial = false) {
+        const statusText = document.getElementById('syncStatusText');
+        const syncDot = document.getElementById('syncDot');
+        const fallbackBanner = document.getElementById('fallbackBanner');
+
+        if (initial) {
+          statusText.textContent = 'Menyinkronkan Google Sheets...';
+        }
+
+        try {
+          const fresh = await DataService.fetchStudents();
+          this.students = fresh;
+          this.isOfflineDemo = false;
+          fallbackBanner.classList.add('hidden');
+
+          const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+          statusText.textContent = `Live · ${this.students.length} Santri (${timeStr})`;
+          syncDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+          document.getElementById('lastUpdatedBadge').textContent = `Pembaruan terakhir ${timeStr} · Auto 30 dtk`;
+
+          if (initial) {
+            Toast.show(`Berhasil memuat ${this.students.length} data santri secara langsung.`, 'success');
+          }
+        } catch (err) {
+          console.warn('CSV fetch error, activating fallback preview:', err);
+          if (this.students.length === 0) {
+            this.students = DataService.getFallbackStudents();
+            this.isOfflineDemo = true;
+            fallbackBanner.classList.remove('hidden');
+            statusText.textContent = `Mode Pratinjau · ${this.students.length} Santri`;
+            syncDot.className = 'w-2 h-2 rounded-full bg-amber-500';
+            if (initial) {
+              Toast.show('Menggunakan data pratinjau lokal sementara.', 'warning');
+            }
+          }
+        }
+
+        this.renderDashboardMetrics();
+        this.renderQuickClassPills();
+        if (this.activeTab === 'teachers') this.renderTeacherDirectory();
+        if (this.activeTab === 'map') this.renderFullExamMap();
+      },
+
+      startAutoRefresh() {
+        if (this.refreshTimer) clearInterval(this.refreshTimer);
+        this.refreshTimer = setInterval(() => this.loadData(false), 30000);
+      },
+
+      /* ---------------- Navigation & beUI Animated Tabs ---------------- */
+      switchTab(tab) {
+        this.activeTab = tab;
+        SoundEngine.click();
+
+        // Hide all top-level views
+        document.getElementById('viewSearch').classList.add('hidden');
+        document.getElementById('viewDetail').classList.add('hidden');
+        document.getElementById('viewTeachers').classList.add('hidden');
+        document.getElementById('viewMap').classList.add('hidden');
+        document.getElementById('breadcrumbBar').classList.add('hidden');
+
+        if (tab === 'search') {
+          document.getElementById('viewSearch').classList.remove('hidden');
+        } else if (tab === 'teachers') {
+          document.getElementById('viewTeachers').classList.remove('hidden');
+          document.getElementById('teacherDirectoryView').classList.remove('hidden');
+          document.getElementById('teacherStudentsView').classList.add('hidden');
+          this.renderTeacherDirectory();
+        } else if (tab === 'map') {
+          document.getElementById('viewMap').classList.remove('hidden');
+          this.renderFullExamMap();
+        }
+
+        // Update desktop tab styling
+        document.querySelectorAll('.nav-tab').forEach(btn => {
+          const active = btn.dataset.tab === tab;
+          btn.classList.toggle('text-slate-900', active);
+          btn.classList.toggle('dark:text-white', active);
+          btn.classList.toggle('text-slate-500', !active);
+          btn.classList.toggle('dark:text-zinc-400', !active);
+        });
+
+        // Update mobile tab styling
+        document.querySelectorAll('.mobile-nav-tab').forEach(btn => {
+          const active = btn.dataset.tab === tab;
+          btn.classList.toggle('bg-emerald-600', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('text-slate-600', !active);
+          btn.classList.toggle('dark:text-zinc-400', !active);
+        });
+
+        this.updateTabIndicator();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      updateTabIndicator() {
+        const indicator = document.getElementById('tabIndicator');
+        const activeBtn = document.querySelector(`.nav-tab[data-tab="${this.activeTab}"]`);
+        if (!indicator || !activeBtn) return;
+        indicator.style.width = `${activeBtn.offsetWidth}px`;
+        indicator.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`;
+      },
+
+      setBreadcrumb(label) {
+        const bar = document.getElementById('breadcrumbBar');
+        const current = document.getElementById('breadcrumbCurrent');
+        bar.classList.remove('hidden');
+        current.textContent = label;
+      },
+
+      /* ---------------- Dashboard Metrics & Bencho Stacked Bar ---------------- */
+      renderDashboardMetrics() {
+        const teachers = new Set();
+        const rooms = new Set();
+        let countK = 0, countM = 0, countOther = 0;
+
+        this.students.forEach(s => {
+          if (s.guru && s.guru !== '-') teachers.add(s.guru);
+          if (s.ruang && s.ruang !== '-') rooms.add(s.ruang);
+          const rUpper = (s.ruang || '').toUpperCase();
+          if (rUpper.startsWith('K')) countK++;
+          else if (rUpper.startsWith('M')) countM++;
+          else countOther++;
+        });
+
+        animateCounter(document.getElementById('statTotalStudents'), this.students.length);
+        animateCounter(document.getElementById('statTotalTeachers'), teachers.size);
+        animateCounter(document.getElementById('statTotalRooms'), rooms.size);
+
+        // Render Bencho Stacked Distribution Bar
+        const total = Math.max(this.students.length, 1);
+        const segments = [
+          { label: 'Gedung K', count: countK, color: 'bg-emerald-500', dot: 'bg-emerald-500' },
+          { label: 'Gedung M', count: countM, color: 'bg-teal-500', dot: 'bg-teal-500' },
+          { label: 'Mushalla / Lainnya', count: countOther, color: 'bg-amber-400', dot: 'bg-amber-400' },
+        ].filter(seg => seg.count > 0);
+
+        const barEl = document.getElementById('buildingStackedBar');
+        const legendEl = document.getElementById('buildingLegend');
+
+        barEl.innerHTML = segments.map(seg => {
+          const pct = ((seg.count / total) * 100).toFixed(1);
+          return `<div class="bar-segment h-full rounded-full ${seg.color}" style="flex-grow: ${seg.count};" title="${seg.label}: ${seg.count} santri (${pct}%)"></div>`;
+        }).join('');
+
+        legendEl.innerHTML = segments.map(seg => {
+          const pct = Math.round((seg.count / total) * 100);
+          return `
+            <div class="inline-flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full ${seg.dot}"></span>
+              <span class="font-semibold">${seg.label}</span>
+              <span class="font-mono text-slate-400 dark:text-zinc-500">${seg.count} (${pct}%)</span>
+            </div>
+          `;
+        }).join('');
+      },
+
+      renderQuickClassPills() {
+        const container = document.getElementById('quickClassFilters');
+        const classSet = new Set();
+        this.students.forEach(s => {
+          if (s.kelas && s.kelas !== '-') classSet.add(s.kelas);
+        });
+        const sortedClasses = Array.from(classSet).sort((a, b) => a.localeCompare(b, 'id', { numeric: true }));
+
+        if (sortedClasses.length === 0) {
+          container.innerHTML = '';
+          return;
+        }
+
+        const displayClasses = sortedClasses.slice(0, 10);
+        container.innerHTML = `<span class="text-[11px] font-medium text-slate-400 dark:text-zinc-500 mr-1">Filter Kelas:</span>` +
+          displayClasses.map(cls => `
+            <button data-class="${escapeHtml(cls)}" class="class-pill tactile-btn px-2.5 py-1 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-zinc-800/90 text-slate-600 dark:text-zinc-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 hover:text-emerald-700 dark:hover:text-emerald-300 border border-slate-200/80 dark:border-zinc-700/80">
+              ${escapeHtml(cls)}
+            </button>
+          `).join('');
+
+        container.querySelectorAll('.class-pill').forEach(btn => {
+          btn.addEventListener('click', () => {
+            SoundEngine.click();
+            this.showClassBrowse(btn.dataset.class);
+          });
+        });
+      },
+
+      showClassBrowse(kelasName) {
+        const filtered = this.students.filter(s => s.kelas === kelasName);
+        const section = document.getElementById('classBrowseSection');
+        const title = document.getElementById('classBrowseTitle');
+        const grid = document.getElementById('classBrowseGrid');
+
+        title.textContent = `Daftar Santri ${kelasName} (${filtered.length} santri)`;
+        grid.innerHTML = filtered.map(s => `
+          <button data-id="${s.id}" class="browse-student-card tactile-btn text-left p-4 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 hover:border-emerald-500 dark:hover:border-emerald-500 shadow-2xs hover:shadow-arc transition-all flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-sm flex items-center justify-center shrink-0 border border-emerald-200/70 dark:border-emerald-800/60">
+              ${escapeHtml(s.nama.charAt(0).toUpperCase())}
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-sm font-bold text-slate-900 dark:text-white truncate">${escapeHtml(s.nama)}</div>
+              <div class="text-[11px] text-slate-500 dark:text-zinc-400 truncate mt-0.5">${escapeHtml(s.jadwal)} · <span class="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">${escapeHtml(s.ruang)}</span></div>
+            </div>
+          </button>
+        `).join('');
+
+        grid.querySelectorAll('.browse-student-card').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const st = this.students.find(item => item.id === Number(btn.dataset.id));
+            if (st) this.openStudentDetail(st);
+          });
+        });
+
+        section.classList.remove('hidden');
+        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      },
+
+      /* ---------------- Command Palette Search ---------------- */
+      handleSearchInput(query) {
+        const list = document.getElementById('suggestionsList');
+        const body = document.getElementById('suggestionsBody');
+        const countLabel = document.getElementById('suggestionCountLabel');
+        const clearBtn = document.getElementById('clearSearchBtn');
+
+        clearBtn.classList.toggle('hidden', query.length === 0);
+
+        if (query.trim().length < 2) {
+          list.classList.add('hidden');
+          this.activeSuggestions = [];
+          this.suggestionIndex = -1;
+          return;
+        }
+
+        const q = query.toLowerCase().trim();
+        const matches = this.students.filter(s =>
+          s.nama.toLowerCase().includes(q) ||
+          s.kelas.toLowerCase().includes(q) ||
+          s.ruang.toLowerCase().includes(q) ||
+          s.guru.toLowerCase().includes(q)
+        ).slice(0, 18);
+
+        this.activeSuggestions = matches;
+        this.suggestionIndex = matches.length > 0 ? 0 : -1;
+        countLabel.textContent = `${matches.length} hasil ditemukan`;
+
+        if (matches.length === 0) {
+          body.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 dark:text-zinc-400">Tidak ditemukan santri dengan kata kunci "<strong>${escapeHtml(query)}</strong>"</div>`;
+        } else {
+          body.innerHTML = matches.map((s, idx) => `
+            <button data-idx="${idx}" class="suggestion-row w-full px-4 py-3 text-left flex items-center justify-between gap-3 transition-colors ${idx === 0 ? 'bg-emerald-50/80 dark:bg-emerald-950/40' : 'hover:bg-slate-50 dark:hover:bg-zinc-800/70'}">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center shrink-0">
+                  ${escapeHtml(s.nama.charAt(0).toUpperCase())}
+                </div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-slate-900 dark:text-white truncate">${escapeHtml(s.nama)}</div>
+                  <div class="text-xs text-slate-500 dark:text-zinc-400 truncate">${escapeHtml(s.kelas)} · ${escapeHtml(s.jadwal)}</div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-lg text-[11px] font-mono font-bold bg-slate-100 dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 shrink-0">${escapeHtml(s.ruang)}</span>
+            </button>
+          `).join('');
+
+          body.querySelectorAll('.suggestion-row').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const chosen = this.activeSuggestions[Number(btn.dataset.idx)];
+              if (chosen) this.openStudentDetail(chosen);
+            });
+          });
+        }
+
+        list.classList.remove('hidden');
+      },
+
+      highlightSuggestion(newIndex) {
+        if (this.activeSuggestions.length === 0) return;
+        this.suggestionIndex = (newIndex + this.activeSuggestions.length) % this.activeSuggestions.length;
+        const rows = document.querySelectorAll('#suggestionsBody .suggestion-row');
+        rows.forEach((row, idx) => {
+          const active = idx === this.suggestionIndex;
+          row.classList.toggle('bg-emerald-50/80', active);
+          row.classList.toggle('dark:bg-emerald-950/40', active);
+          if (active) row.scrollIntoView({ block: 'nearest' });
+        });
+      },
+
+      /* ---------------- Student Profile Detail View ---------------- */
+      openStudentDetail(student) {
+        SoundEngine.pop();
+        this.currentStudent = student;
+
+        document.getElementById('suggestionsList').classList.add('hidden');
+        document.getElementById('viewSearch').classList.add('hidden');
+        document.getElementById('viewTeachers').classList.add('hidden');
+        document.getElementById('viewMap').classList.add('hidden');
+        document.getElementById('viewDetail').classList.remove('hidden');
+        this.setBreadcrumb(`${student.nama} (${student.kelas})`);
+
+        const initials = escapeHtml(student.nama.charAt(0).toUpperCase());
+        const cleanPhone = (student.hp || '').replace(/\D/g, '');
+        const waIntl = cleanPhone ? (cleanPhone.startsWith('62') ? cleanPhone : '62' + cleanPhone.replace(/^0/, '')) : '';
+
+        const rawMsg = DataService.getCustomMessage() || DataService.DEFAULT_MESSAGE;
+        const processedMsg = rawMsg
+          .replace(/{ruang}/g, student.ruang)
+          .replace(/{guru}/g, student.guru);
+
+        const waText = `Assalamualaikum Warahmatullahi Wabarakatuh,%0A%0AKepada Yth. Abi Umi / Bapak Ibu Wali Santri%0A%0ABerikut informasi jadwal ujian untuk ananda *${encodeURIComponent(student.nama)}* (${encodeURIComponent(student.kelas)}):%0A%0A📅 Jadwal: *${encodeURIComponent(student.jadwal)}*%0A🕐 Waktu: *${encodeURIComponent(student.waktu)}*%0A🏫 Ruang: *${encodeURIComponent(student.ruang)}*%0A👨‍🏫 Penguji: *${encodeURIComponent(student.guru)}*%0A%0A${encodeURIComponent(processedMsg)}%0A%0AWassalamualaikum Warahmatullahi Wabarakatuh`;
+        const waUrl = waIntl ? `https://wa.me/${waIntl}?text=${waText}` : '#';
+        const telUrl = student.hp && student.hp !== '-' ? `tel:${student.hp}` : '#';
+
+        const avatarHtml = student.foto
+          ? `<img src="${escapeHtml(student.foto)}" alt="${escapeHtml(student.nama)}" class="w-full h-full object-cover" loading="lazy" onerror="this.parentElement.innerHTML='<span>${initials}</span>';" />`
+          : `<span>${initials}</span>`;
+
+        const detailContent = document.getElementById('detailContent');
+        detailContent.innerHTML = `
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            
+            <!-- Left Identity Column (Arc Bento Card) -->
+            <div class="lg:col-span-4 rounded-3xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-6 shadow-arc flex flex-col items-center text-center">
+              <button id="studentAvatarZoomBtn" class="tactile-btn relative w-32 h-32 rounded-full bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-950 dark:to-zinc-800 border-4 border-white dark:border-zinc-800 shadow-lg overflow-hidden flex items-center justify-center text-4xl font-extrabold text-emerald-700 dark:text-emerald-300 mb-4 group">
+                ${avatarHtml}
+                ${student.foto ? '<span class="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 font-semibold">Perbesar</span>' : ''}
+              </button>
+
+              <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60 mb-2">
+                ${escapeHtml(student.kelas)}
+              </span>
+              <h2 class="text-xl font-extrabold text-slate-900 dark:text-white leading-snug">
+                ${escapeHtml(student.nama)}
+              </h2>
+              <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Peserta Ujian SD International Tahfizh Quran</p>
+
+              <!-- Contact Quick Actions -->
+              <div class="w-full mt-6 pt-5 border-t border-slate-100 dark:border-zinc-800 space-y-2.5">
+                <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-500">Kontak Wali / Nomor HP</div>
+                <div class="text-sm font-mono font-bold text-slate-800 dark:text-zinc-200">${escapeHtml(student.hp)}</div>
+                ${waIntl ? `
+                  <div class="grid grid-cols-2 gap-2 pt-1">
+                    <a href="${telUrl}" class="tactile-btn inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-white">
+                      Telepon
+                    </a>
+                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="tactile-btn inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl text-xs font-bold bg-[#25D366] hover:bg-[#1ebe5d] text-white shadow-sm">
+                      WhatsApp
+                    </a>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Right Schedule & Instructions Column -->
+            <div class="lg:col-span-8 space-y-5">
+              
+              <!-- Bento 2x2 Schedule Cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div class="rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 p-4 shadow-2xs">
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Tanggal Ujian</div>
+                  <div class="text-base font-extrabold text-slate-900 dark:text-white">${escapeHtml(student.jadwal)}</div>
+                </div>
+                <div class="rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 p-4 shadow-2xs">
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Waktu Pelaksanaan</div>
+                  <div class="text-base font-extrabold font-mono text-emerald-600 dark:text-emerald-400">${escapeHtml(student.waktu)}</div>
+                </div>
+                <div class="rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 p-4 shadow-2xs">
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Ruang Ujian</div>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-lg text-sm font-mono font-extrabold bg-emerald-600 text-white">${escapeHtml(student.ruang)}</span>
+                    <span class="text-xs text-slate-500 dark:text-zinc-400">Disorot di denah bawah</span>
+                  </div>
+                </div>
+                <div class="rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 p-4 shadow-2xs">
+                  <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-zinc-500 mb-1">Guru Penguji</div>
+                  <div class="text-base font-extrabold text-slate-900 dark:text-white">${escapeHtml(student.guru)}</div>
+                </div>
+              </div>
+
+              <!-- Personalized Important Exam Info Box -->
+              <div class="rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/50 p-5">
+                <div class="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 mb-2">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Informasi Penting untuk ${escapeHtml(student.nama)}
+                </div>
+                <p class="text-xs sm:text-sm text-slate-700 dark:text-zinc-200 leading-relaxed mb-3">
+                  Ananda <strong>${escapeHtml(student.nama)}</strong> dijadwalkan mengikuti ujian pada <strong>${escapeHtml(student.jadwal)}</strong> pukul <strong>${escapeHtml(student.waktu)}</strong> di ruang <strong>${escapeHtml(student.ruang)}</strong>.
+                </p>
+                <div class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line border-t border-emerald-200/70 dark:border-emerald-800/40 pt-3">
+                  ${escapeHtml(processedMsg)}
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Interactive Map Embedded Full Width -->
+            <div class="lg:col-span-12 rounded-3xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800/90 p-5 sm:p-6 shadow-arc">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                <div>
+                  <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Peta Lokasi Ruang Ujian</h3>
+                  <p class="text-xs text-slate-500 dark:text-zinc-400">Ruang ujian ananda (${escapeHtml(student.ruang)}) ditandai dengan sorotan hijau</p>
+                </div>
+              </div>
+              ${this.buildExamMapHTML(student.ruang)}
+            </div>
+          </div>
+        `;
+
+        // Photo Lightbox Trigger
+        if (student.foto) {
+          document.getElementById('studentAvatarZoomBtn').addEventListener('click', () => {
+            this.openPhotoLightbox(student.foto, `${student.nama} — ${student.kelas}`);
+          });
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      /* ---------------- Interactive Exam Map Builder ---------------- */
+      buildExamMapHTML(highlightRoom = '') {
+        const buildingK = new Map();
+        const buildingM = new Map();
+        const buildingOther = new Map();
+
+        this.students.forEach(s => {
+          if (!s.ruang || s.ruang === '-') return;
+          const rUpper = s.ruang.toUpperCase();
+          const targetMap = rUpper.startsWith('K') ? buildingK : (rUpper.startsWith('M') ? buildingM : buildingOther);
+          if (!targetMap.has(s.ruang)) {
+            targetMap.set(s.ruang, { teachers: new Set(), count: 0 });
+          }
+          const entry = targetMap.get(s.ruang);
+          if (s.guru && s.guru !== '-') entry.teachers.add(s.guru);
+          entry.count++;
+        });
+
+        const renderBuilding = (title, mapData) => {
+          if (mapData.size === 0) return '';
+          const sorted = Array.from(mapData.entries()).sort((a, b) => a[0].localeCompare(b[0], 'id', { numeric: true }));
+          return `
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <h4 class="text-xs font-mono font-bold uppercase tracking-wider text-slate-700 dark:text-zinc-300">${title}</h4>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                ${sorted.map(([room, info]) => {
+                  const isTarget = highlightRoom && room.toLowerCase() === highlightRoom.toLowerCase();
+                  const teachersArr = Array.from(info.teachers);
+                  return `
+                    <div class="rounded-2xl p-3.5 border transition-all ${
+                      isTarget
+                        ? 'room-highlight bg-emerald-600 text-white border-emerald-500 shadow-lg scale-[1.02]'
+                        : 'bg-slate-50 dark:bg-zinc-900/90 border-slate-200 dark:border-zinc-800 hover:border-emerald-400 dark:hover:border-emerald-600'
+                    }">
+                      <div class="flex items-center justify-between gap-1 mb-1.5">
+                        <span class="font-mono text-sm font-extrabold ${isTarget ? 'text-white' : 'text-emerald-700 dark:text-emerald-400'}">${escapeHtml(room)}</span>
+                        <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-md ${isTarget ? 'bg-white/20 text-white' : 'bg-white dark:bg-zinc-800 text-slate-500 dark:text-zinc-400 border border-slate-200/70 dark:border-zinc-700'}">${info.count} santri</span>
+                      </div>
+                      <div class="text-[11px] leading-snug ${isTarget ? 'text-emerald-50' : 'text-slate-600 dark:text-zinc-400'}">
+                        ${teachersArr.length > 0 ? teachersArr.map(t => escapeHtml(t)).join('<br>') : 'Penguji TBD'}
+                      </div>
+                      ${isTarget ? '<div class="mt-2 text-[10px] font-bold uppercase tracking-wider bg-white/20 rounded-md px-2 py-0.5 inline-block">Lokasi Ujian Anda</div>' : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        };
+
+        return `
+          <div class="space-y-6">
+            <!-- Gate & Mushalla Landmark Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-dashed border-slate-300 dark:border-zinc-700 p-4 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-mono font-bold uppercase tracking-wider text-slate-900 dark:text-white">Gerbang Masuk Utama</div>
+                  <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Titik kedatangan & pengecekan panitia ujian</p>
+                </div>
+              </div>
+
+              <div class="rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-4 flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0 font-bold text-lg">
+                  <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-mono font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300">Gedung Mushalla — Ujian Tahsin</div>
+                  <p class="text-xs text-amber-800/90 dark:text-amber-200/80 mt-0.5">Level I, II, III & Kelas VI · Santri wajib ujian Tahsin sebelum ujian Level.</p>
+                </div>
+              </div>
+            </div>
+
+            ${renderBuilding('Gedung K', buildingK)}
+            ${renderBuilding('Gedung M', buildingM)}
+            ${renderBuilding('Ruang Lainnya', buildingOther)}
+          </div>
+        `;
+      },
+
+      renderFullExamMap() {
+        document.getElementById('fullExamMapContainer').innerHTML = this.buildExamMapHTML('');
+      },
+
+      /* ---------------- Teachers Directory & Schedule View ---------------- */
+      renderTeacherDirectory(filterText = '') {
+        const teachersMap = new Map();
+        this.students.forEach(s => {
+          if (!s.guru || s.guru === '-') return;
+          if (!teachersMap.has(s.guru)) {
+            teachersMap.set(s.guru, { nama: s.guru, rooms: new Set(), count: 0 });
+          }
+          const t = teachersMap.get(s.guru);
+          if (s.ruang && s.ruang !== '-') t.rooms.add(s.ruang);
+          t.count++;
+        });
+
+        const q = filterText.toLowerCase().trim();
+        const list = Array.from(teachersMap.values())
+          .filter(t => !q || t.nama.toLowerCase().includes(q) || Array.from(t.rooms).join(' ').toLowerCase().includes(q))
+          .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+
+        const grid = document.getElementById('teachersCardGrid');
+        if (list.length === 0) {
+          grid.innerHTML = `<div class="col-span-full p-8 text-center text-sm text-slate-500 dark:text-zinc-400 bg-white dark:bg-surface-dark rounded-2xl border border-slate-200 dark:border-zinc-800">Tidak ada guru penguji ditemukan.</div>`;
+          return;
+        }
+
+        grid.innerHTML = list.map(t => {
+          const roomsText = Array.from(t.rooms).join(', ') || '-';
+          return `
+            <button data-teacher="${escapeHtml(t.nama)}" class="teacher-card tactile-btn text-left p-5 rounded-2xl bg-white dark:bg-surface-dark border border-slate-200/90 dark:border-zinc-800 hover:border-emerald-500 dark:hover:border-emerald-500 shadow-arc hover:shadow-arc-hover transition-all flex flex-col justify-between gap-4 group">
+              <div class="flex items-start justify-between gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 font-extrabold text-sm flex items-center justify-center shrink-0 border border-emerald-200/70 dark:border-emerald-800/60">
+                  ${escapeHtml(t.nama.charAt(0).toUpperCase())}
+                </div>
+                <span class="px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300">${escapeHtml(roomsText)}</span>
+              </div>
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${escapeHtml(t.nama)}</h3>
+                <div class="flex items-center justify-between mt-2 text-xs text-slate-500 dark:text-zinc-400">
+                  <span>${t.count} santri terjadwal</span>
+                  <span class="font-semibold text-emerald-600 dark:text-emerald-400">Lihat daftar →</span>
+                </div>
+              </div>
+            </button>
+          `;
+        }).join('');
+
+        grid.querySelectorAll('.teacher-card').forEach(btn => {
+          btn.addEventListener('click', () => this.openTeacherStudents(btn.dataset.teacher));
+        });
+      },
+
+      openTeacherStudents(teacherName) {
+        SoundEngine.pop();
+        this.currentTeacherName = teacherName;
+        const list = this.students
+          .filter(s => s.guru === teacherName)
+          .sort((a, b) => parseExamDateScore(a.jadwal) - parseExamDateScore(b.jadwal));
+
+        this.currentTeacherStudents = list;
+        const rooms = Array.from(new Set(list.map(s => s.ruang).filter(r => r && r !== '-'))).join(', ') || '-';
+
+        document.getElementById('teacherDetailRoomBadge').textContent = `Ruang ${rooms}`;
+        document.getElementById('selectedTeacherTitle').textContent = teacherName;
+        document.getElementById('selectedTeacherSubtitle').textContent = `${list.length} santri diurutkan berdasarkan tanggal ujian`;
+        document.getElementById('teacherStudentSearchInput').value = '';
+
+        this.renderTeacherStudentRows(list);
+
+        document.getElementById('teacherDirectoryView').classList.add('hidden');
+        document.getElementById('teacherStudentsView').classList.remove('hidden');
+        this.setBreadcrumb(`Penguji: ${teacherName}`);
+      },
+
+      renderTeacherStudentRows(list) {
+        const tbody = document.getElementById('teacherStudentTableBody');
+        const mobileList = document.getElementById('teacherStudentCardsMobile');
+
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 dark:text-zinc-400">Tidak ada santri ditemukan.</td></tr>`;
+          mobileList.innerHTML = `<div class="py-8 text-center text-xs text-slate-500 dark:text-zinc-400">Tidak ada santri ditemukan.</div>`;
+          return;
+        }
+
+        // Desktop / Tablet Table Rows
+        tbody.innerHTML = list.map((s, idx) => {
+          const clean = (s.hp || '').replace(/\D/g, '');
+          const wa = clean ? `https://wa.me/${clean.startsWith('62') ? clean : '62' + clean.replace(/^0/, '')}` : '#';
+          return `
+            <tr class="hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors">
+              <td class="py-3 px-3 text-center font-mono text-slate-400">${idx + 1}</td>
+              <td class="py-3 px-3">
+                <button data-sid="${s.id}" class="open-from-teacher text-left font-bold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                  ${escapeHtml(s.nama)}
+                </button>
+                <div class="text-[11px] text-slate-400">${escapeHtml(s.kelas)}</div>
+              </td>
+              <td class="py-3 px-3 font-medium text-slate-700 dark:text-zinc-300">${escapeHtml(s.jadwal)}</td>
+              <td class="py-3 px-3 font-mono text-xs text-emerald-700 dark:text-emerald-400 font-semibold">${escapeHtml(s.waktu)}</td>
+              <td class="py-3 px-3 text-right">
+                ${clean ? `
+                  <a href="${wa}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900 font-mono text-xs font-semibold">
+                    WA · ${escapeHtml(s.hp)}
+                  </a>
+                ` : '<span class="text-slate-400">-</span>'}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        // Mobile Responsive Cards (Zero horizontal scroll)
+        mobileList.innerHTML = list.map((s, idx) => {
+          const clean = (s.hp || '').replace(/\D/g, '');
+          const wa = clean ? `https://wa.me/${clean.startsWith('62') ? clean : '62' + clean.replace(/^0/, '')}` : '#';
+          return `
+            <div class="p-3.5 rounded-2xl bg-slate-50/90 dark:bg-zinc-900/90 border border-slate-200/80 dark:border-zinc-800 space-y-2.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-6 h-6 rounded-lg bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-mono text-[11px] font-bold text-slate-500 flex items-center justify-center shrink-0">${idx + 1}</span>
+                  <div class="min-w-0">
+                    <button data-sid="${s.id}" class="open-from-teacher text-left text-sm font-extrabold text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 truncate block w-full">
+                      ${escapeHtml(s.nama)}
+                    </button>
+                    <span class="text-[11px] font-semibold text-slate-500 dark:text-zinc-400">${escapeHtml(s.kelas)}</span>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800 shrink-0">${escapeHtml(s.ruang)}</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-slate-200/70 dark:border-zinc-800">
+                <div>
+                  <div class="text-[10px] font-mono uppercase text-slate-400">Tanggal</div>
+                  <div class="font-semibold text-slate-800 dark:text-zinc-200 leading-snug">${escapeHtml(s.jadwal)}</div>
+                </div>
+                <div>
+                  <div class="text-[10px] font-mono uppercase text-slate-400">Waktu</div>
+                  <div class="font-mono font-bold text-emerald-600 dark:text-emerald-400">${escapeHtml(s.waktu)}</div>
+                </div>
+              </div>
+
+              ${clean ? `
+                <div class="pt-1 flex justify-end">
+                  <a href="${wa}" target="_blank" rel="noopener noreferrer" class="tactile-btn inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-semibold">
+                    WhatsApp Wali · ${escapeHtml(s.hp)}
+                  </a>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+
+        document.querySelectorAll('#teacherStudentsView .open-from-teacher').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const st = this.students.find(item => item.id === Number(btn.dataset.sid));
+            if (st) this.openStudentDetail(st);
+          });
+        });
+      },
+
+      /* ---------------- Print Modal (With Class Filter) & Print Generators ---------------- */
+      openPrintModal() {
+        SoundEngine.click();
+        if (this.students.length === 0) {
+          Toast.show('Data santri belum tersedia untuk dicetak.', 'warning');
+          return;
+        }
+        this.selectedPrintIds.clear();
+        this.printClassFilterValue = 'ALL';
+        document.getElementById('printSearchInput').value = '';
+        this.populatePrintClassFilter();
+        this.renderPrintChecklist();
+        document.getElementById('printModal').classList.remove('hidden');
+      },
+
+      closePrintModal() {
+        document.getElementById('printModal').classList.add('hidden');
+      },
+
+      populatePrintClassFilter() {
+        const select = document.getElementById('printClassFilter');
+        const classCounts = new Map();
+        this.students.forEach(s => {
+          const k = s.kelas && s.kelas !== '-' ? s.kelas : 'Tanpa Kelas';
+          classCounts.set(k, (classCounts.get(k) || 0) + 1);
+        });
+        const sortedClasses = Array.from(classCounts.entries()).sort((a, b) => a[0].localeCompare(b[0], 'id', { numeric: true }));
+
+        select.innerHTML = `<option value="ALL">Semua Kelas (${this.students.length} santri)</option>` +
+          sortedClasses.map(([cls, cnt]) => `<option value="${escapeHtml(cls)}">${escapeHtml(cls)} (${cnt} santri)</option>`).join('');
+        select.value = this.printClassFilterValue;
+      },
+
+      getFilteredPrintStudents() {
+        const q = (document.getElementById('printSearchInput').value || '').toLowerCase().trim();
+        const clsFilter = this.printClassFilterValue;
+        return this.students.filter(s => {
+          const studentCls = s.kelas && s.kelas !== '-' ? s.kelas : 'Tanpa Kelas';
+          const matchesClass = clsFilter === 'ALL' || studentCls === clsFilter;
+          const matchesSearch = !q ||
+            s.nama.toLowerCase().includes(q) ||
+            s.kelas.toLowerCase().includes(q) ||
+            s.ruang.toLowerCase().includes(q) ||
+            s.guru.toLowerCase().includes(q);
+          return matchesClass && matchesSearch;
+        });
+      },
+
+      renderPrintChecklist() {
+        const filtered = this.getFilteredPrintStudents();
+        const listEl = document.getElementById('printStudentChecklist');
+        const summaryEl = document.getElementById('printFilterSummary');
+
+        summaryEl.textContent = this.printClassFilterValue === 'ALL'
+          ? `Menampilkan ${filtered.length} dari ${this.students.length} santri`
+          : `Filter ${this.printClassFilterValue}: ${filtered.length} santri`;
+
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<div class="py-8 text-center text-xs text-slate-500 dark:text-zinc-400">Tidak ada santri yang sesuai dengan filter.</div>`;
+        } else {
+          listEl.innerHTML = filtered.map(s => {
+            const checked = this.selectedPrintIds.has(s.id);
+            const initials = escapeHtml(s.nama.charAt(0).toUpperCase());
+            const thumb = s.foto
+              ? `<img src="${escapeHtml(s.foto)}" alt="" class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-zinc-700 shrink-0" onerror="this.outerHTML='<span class=\\'w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center shrink-0\\'>${initials}</span>';" />`
+              : `<span class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-xs font-bold flex items-center justify-center shrink-0">${initials}</span>`;
+
+            return `
+              <label class="flex items-center justify-between gap-2.5 p-2.5 sm:p-3 rounded-xl border cursor-pointer transition-all ${
+                checked
+                  ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500'
+                  : 'bg-white dark:bg-zinc-950 border-slate-200 dark:border-zinc-800 hover:border-emerald-300'
+              }">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <input type="checkbox" data-pid="${s.id}" ${checked ? 'checked' : ''} class="print-chk w-4 h-4 accent-emerald-600 rounded shrink-0" />
+                  ${thumb}
+                  <div class="min-w-0">
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">${escapeHtml(s.nama)}</div>
+                    <div class="text-[11px] text-slate-500 dark:text-zinc-400 truncate">${escapeHtml(s.kelas)} · ${escapeHtml(s.jadwal)}</div>
+                  </div>
+                </div>
+                <span class="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400 shrink-0 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800">${escapeHtml(s.ruang)}</span>
+              </label>
+            `;
+          }).join('');
+
+          listEl.querySelectorAll('.print-chk').forEach(chk => {
+            chk.addEventListener('change', () => {
+              const id = Number(chk.dataset.pid);
+              if (chk.checked) this.selectedPrintIds.add(id);
+              else this.selectedPrintIds.delete(id);
+              SoundEngine.click();
+              this.renderPrintChecklist();
+            });
+          });
+        }
+
+        document.getElementById('printSelectedCount').textContent = this.selectedPrintIds.size;
+      },
+
+      printStudentCards(studentList) {
+        if (!studentList || studentList.length === 0) {
+          Toast.show('Pilih minimal 1 santri untuk dicetak.', 'warning');
+          return;
+        }
+
+        const customMsg = DataService.getCustomMessage() || DataService.DEFAULT_MESSAGE;
+        const buildCard = (s) => {
+          const notice = escapeHtml(
+            customMsg.replace(/{ruang}/g, s.ruang).replace(/{guru}/g, s.guru)
+          ).replace(/\n/g, '<br>');
+
+          const initials = escapeHtml(s.nama.charAt(0).toUpperCase());
+          const photoHtml = s.foto
+            ? `<img src="${escapeHtml(s.foto)}" alt="${escapeHtml(s.nama)}" class="photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" /><div class="photo-fallback" style="display:none;"><span>${initials}</span><small>FOTO</small></div>`
+            : `<div class="photo-fallback"><span>${initials}</span><small>SANTRI</small></div>`;
+
+          return `
+            <div class="card-content">
+              <img src="${DataService.LOGO_URL}" class="watermark" onerror="this.style.display='none';" />
+              
+              <!-- Header Bar -->
+              <div class="card-header">
+                <div class="brand-left">
+                  <img src="${DataService.LOGO_URL}" class="header-logo" onerror="this.style.display='none';" />
+                  <div class="brand-titles">
+                    <div class="school-sub">SD INTERNATIONAL TAHFIZH QURAN</div>
+                    <h1>KARTU PESERTA & JADWAL UJIAN</h1>
+                  </div>
+                </div>
+                <div class="room-pill">
+                  <span class="room-pill-lbl">RUANG</span>
+                  <span class="room-pill-val">${escapeHtml(s.ruang)}</span>
+                </div>
+              </div>
+
+              <!-- Main Profile + Schedule Grid -->
+              <div class="main-body">
+                <div class="photo-col">
+                  <div class="photo-frame">${photoHtml}</div>
+                  <div class="class-tag">${escapeHtml(s.kelas)}</div>
+                </div>
+
+                <div class="details-col">
+                  <div class="name-block">
+                    <span class="field-kicker">NAMA LENGKAP SANTRI</span>
+                    <div class="student-name">${escapeHtml(s.nama)}</div>
+                  </div>
+
+                  <div class="schedule-grid">
+                    <div class="sched-item highlight">
+                      <span class="lbl">Hari / Tanggal Ujian</span>
+                      <span class="val">${escapeHtml(s.jadwal)}</span>
+                    </div>
+                    <div class="sched-item highlight">
+                      <span class="lbl">Waktu Pelaksanaan</span>
+                      <span class="val mono">${escapeHtml(s.waktu)}</span>
+                    </div>
+                    <div class="sched-item">
+                      <span class="lbl">Dewan Guru Penguji</span>
+                      <span class="val">${escapeHtml(s.guru)}</span>
+                    </div>
+                    <div class="sched-item">
+                      <span class="lbl">Kontak Orang Tua / Wali</span>
+                      <span class="val mono">${escapeHtml(s.hp)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Informative Notice Box -->
+              <div class="notice-box">
+                <div class="notice-title">INFORMASI & TATA TERTIB UJIAN</div>
+                <div class="notice-body">${notice}</div>
+              </div>
+
+              <!-- Card Footer Strip -->
+              <div class="card-footer">
+                <span>Harap membawa kartu ini saat pelaksanaan ujian · Hadir 15 menit lebih awal</span>
+                <span class="mono-tag">GENERASI QURAN SIAP BERPRESTASI</span>
+              </div>
+            </div>
+          `;
+        };
+
+        let pagesHtml = '';
+        for (let i = 0; i < studentList.length; i += 2) {
+          pagesHtml += `<div class="print-page">`;
+          pagesHtml += `<div class="card-half card-top">${buildCard(studentList[i])}<div class="cut-guide">✂ Potong di sepanjang garis ini</div></div>`;
+          if (i + 1 < studentList.length) {
+            pagesHtml += `<div class="card-half">${buildCard(studentList[i + 1])}</div>`;
+          }
+          pagesHtml += `</div>`;
+        }
+
+        const win = window.open('', '_blank');
+        if (!win) {
+          Toast.show('Popup diblokir browser. Mohon izinkan popup untuk mencetak.', 'warning');
+          return;
+        }
+
+        win.document.write(`<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><title>Cetak Kartu Jadwal Ujian (${studentList.length} Santri)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background:#e2e8f0; color:#0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .toolbar { position:fixed; top:16px; right:16px; display:flex; gap:8px; z-index:99; }
+  .btn { padding:10px 18px; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+  .btn-print { background:#059669; color:#fff; }
+  .btn-close { background:#334155; color:#fff; }
+  .print-page { width:210mm; height:297mm; margin:16px auto; background:#fff; page-break-after:always; box-shadow:0 6px 24px rgba(15,23,42,.12); overflow:hidden; }
+  .print-page:last-child { page-break-after:auto; }
+  .card-half { width:210mm; height:148.5mm; padding:9mm 12mm; position:relative; }
+  .card-top { border-bottom:1.5px dashed #94a3b8; }
+  .cut-guide { position:absolute; bottom:-9px; right:14mm; background:#fff; padding:0 6px; font-size:9px; color:#64748b; font-weight:600; letter-spacing:0.3px; }
+  .card-content { position:relative; border:2px solid #047857; border-radius:12px; padding:12px 15px; height:100%; display:flex; flex-direction:column; overflow:hidden; background:#fff; }
+  .watermark { position:absolute; top:52%; left:50%; transform:translate(-50%,-50%); width:175px; opacity:.07; pointer-events:none; z-index:0; }
+  .card-header { display:flex; align-items:center; justify-content:space-between; gap:10px; border-bottom:2px solid #047857; padding-bottom:8px; margin-bottom:10px; position:relative; z-index:2; }
+  .brand-left { display:flex; align-items:center; gap:10px; }
+  .header-logo { width:38px; height:38px; object-fit:contain; }
+  .school-sub { font-size:9.5px; font-weight:800; color:#047857; letter-spacing:0.7px; }
+  .card-header h1 { font-size:15.5px; font-weight:900; color:#0f172a; letter-spacing:0.3px; line-height:1.15; }
+  .room-pill { background:#047857; color:#fff; padding:5px 12px; border-radius:8px; text-align:center; min-width:68px; }
+  .room-pill-lbl { display:block; font-size:8px; font-weight:700; opacity:.85; letter-spacing:0.6px; }
+  .room-pill-val { display:block; font-size:15px; font-weight:900; line-height:1.1; }
+  .main-body { display:flex; gap:13px; margin-bottom:9px; position:relative; z-index:2; }
+  .photo-col { width:82px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .photo-frame { width:82px; height:102px; border-radius:9px; border:2px solid #047857; overflow:hidden; background:#ecfdf5; display:flex; align-items:center; justify-content:center; }
+  .photo-img { width:100%; height:100%; object-fit:cover; }
+  .photo-fallback { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(135deg,#ecfdf5,#d1fae5); color:#047857; }
+  .photo-fallback span { font-size:30px; font-weight:900; line-height:1; }
+  .photo-fallback small { font-size:8px; font-weight:800; letter-spacing:0.8px; margin-top:4px; opacity:.8; }
+  .class-tag { width:100%; text-align:center; font-size:10.5px; font-weight:800; color:#065f46; background:#d1fae5; border:1px solid #6ee7b7; border-radius:6px; padding:3px 4px; }
+  .details-col { flex:1; min-width:0; display:flex; flex-direction:column; gap:7px; }
+  .name-block { background:#f8fafc; border:1.5px solid #cbd5e1; border-left:4px solid #047857; border-radius:7px; padding:6px 10px; }
+  .field-kicker { display:block; font-size:8px; font-weight:800; color:#64748b; letter-spacing:0.6px; }
+  .student-name { font-size:15px; font-weight:900; color:#0f172a; line-height:1.2; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .schedule-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .sched-item { background:#f8fafc; border:1px solid #cbd5e1; border-radius:7px; padding:5px 8px; }
+  .sched-item.highlight { background:#ecfdf5; border-color:#a7f3d0; }
+  .sched-item .lbl { display:block; font-size:8.5px; font-weight:700; text-transform:uppercase; color:#475569; margin-bottom:1px; }
+  .sched-item .val { display:block; font-size:11.5px; font-weight:800; color:#0f172a; line-height:1.25; }
+  .sched-item .val.mono { font-family:'Consolas', 'Courier New', monospace; color:#065f46; }
+  .notice-box { flex:1; background:rgba(248,250,252,.94); border:1px solid #cbd5e1; border-radius:8px; padding:7px 10px; position:relative; z-index:2; overflow:hidden; }
+  .notice-title { font-size:9px; font-weight:800; color:#047857; letter-spacing:0.5px; margin-bottom:3px; }
+  .notice-body { font-size:9.8px; line-height:1.42; color:#1e293b; }
+  .card-footer { margin-top:7px; padding-top:5px; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; font-size:8.5px; color:#64748b; font-weight:600; position:relative; z-index:2; }
+  .mono-tag { font-weight:800; color:#047857; letter-spacing:0.4px; }
+  @media print {
+    body { background:#fff; }
+    .toolbar { display:none !important; }
+    .print-page { margin:0; box-shadow:none; }
+    @page { size:A4 portrait; margin:0; }
+  }
+</style></head><body>
+  <div class="toolbar">
+    <button class="btn btn-print" onclick="window.print()">Cetak PDF / Printer</button>
+    <button class="btn btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  ${pagesHtml}
+</body></html>`);
+        win.document.close();
+      },
+
+      /* ---------------- Batch & Single Teacher Attendance Print ---------------- */
+      getAllTeachersSummary() {
+        const map = new Map();
+        this.students.forEach(s => {
+          if (!s.guru || s.guru === '-') return;
+          if (!map.has(s.guru)) {
+            map.set(s.guru, { nama: s.guru, rooms: new Set(), students: [] });
+          }
+          const entry = map.get(s.guru);
+          if (s.ruang && s.ruang !== '-') entry.rooms.add(s.ruang);
+          entry.students.push(s);
+        });
+
+        return Array.from(map.values())
+          .map(t => ({
+            nama: t.nama,
+            roomsText: Array.from(t.rooms).sort((a, b) => a.localeCompare(b, 'id', { numeric: true })).join(', ') || '-',
+            students: t.students.sort((a, b) => parseExamDateScore(a.jadwal) - parseExamDateScore(b.jadwal))
+          }))
+          .sort((a, b) => a.nama.localeCompare(b.nama, 'id'));
+      },
+
+      openTeacherPrintModal() {
+        SoundEngine.click();
+        const teachers = this.getAllTeachersSummary();
+        if (teachers.length === 0) {
+          Toast.show('Belum ada data guru penguji untuk dicetak.', 'warning');
+          return;
+        }
+        // Default: select all teachers so user can immediately print all or filter/deselect
+        this.selectedTeacherPrintNames = new Set(teachers.map(t => t.nama));
+        document.getElementById('teacherPrintSearchInput').value = '';
+        this.renderTeacherPrintChecklist();
+        document.getElementById('teacherPrintModal').classList.remove('hidden');
+      },
+
+      closeTeacherPrintModal() {
+        document.getElementById('teacherPrintModal').classList.add('hidden');
+      },
+
+      renderTeacherPrintChecklist() {
+        const q = (document.getElementById('teacherPrintSearchInput').value || '').toLowerCase().trim();
+        const allTeachers = this.getAllTeachersSummary();
+        const filtered = allTeachers.filter(t =>
+          !q || t.nama.toLowerCase().includes(q) || t.roomsText.toLowerCase().includes(q)
+        );
+
+        const listEl = document.getElementById('teacherPrintChecklist');
+        if (filtered.length === 0) {
+          listEl.innerHTML = `<div class="py-8 text-center text-xs text-slate-500 dark:text-zinc-400">Tidak ditemukan guru penguji yang cocok.</div>`;
+        } else {
+          listEl.innerHTML = filtered.map(t => {
+            const checked = this.selectedTeacherPrintNames.has(t.nama);
+            return `
+              <label class="flex items-center justify-between gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                checked
+                  ? 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-500'
+                  : 'bg-white dark:bg-zinc-950 border-slate-200 dark:border-zinc-800 hover:border-emerald-300'
+              }">
+                <div class="flex items-center gap-3 min-w-0">
+                  <input type="checkbox" data-tname="${escapeHtml(t.nama)}" ${checked ? 'checked' : ''} class="tprint-chk w-4 h-4 accent-emerald-600 rounded shrink-0" />
+                  <div class="min-w-0">
+                    <div class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">${escapeHtml(t.nama)}</div>
+                    <div class="text-[11px] text-slate-500 dark:text-zinc-400">${t.students.length} santri terjadwal</div>
+                  </div>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold bg-slate-100 dark:bg-zinc-800 text-emerald-700 dark:text-emerald-400 shrink-0">${escapeHtml(t.roomsText)}</span>
+              </label>
+            `;
+          }).join('');
+
+          listEl.querySelectorAll('.tprint-chk').forEach(chk => {
+            chk.addEventListener('change', () => {
+              const name = chk.dataset.tname;
+              if (chk.checked) this.selectedTeacherPrintNames.add(name);
+              else this.selectedTeacherPrintNames.delete(name);
+              SoundEngine.click();
+              this.renderTeacherPrintChecklist();
+            });
+          });
+        }
+
+        // Update selected teacher & student totals
+        let studentTotal = 0;
+        allTeachers.forEach(t => {
+          if (this.selectedTeacherPrintNames.has(t.nama)) studentTotal += t.students.length;
+        });
+        document.getElementById('teacherPrintSelectedCount').textContent = this.selectedTeacherPrintNames.size;
+        document.getElementById('teacherPrintStudentTotal').textContent = `(${studentTotal} santri)`;
+      },
+
+      printTeacherAttendanceSheet() {
+        if (!this.currentTeacherName) {
+          Toast.show('Tidak ada data guru yang dipilih.', 'warning');
+          return;
+        }
+        this.printTeacherSheets([this.currentTeacherName]);
+      },
+
+      printTeacherSheets(teacherNames) {
+        if (!teacherNames || teacherNames.length === 0) {
+          Toast.show('Pilih minimal 1 guru penguji untuk dicetak.', 'warning');
+          return;
+        }
+
+        const allTeachers = this.getAllTeachersSummary();
+        const selectedSet = new Set(teacherNames);
+        const chosenTeachers = allTeachers.filter(t => selectedSet.has(t.nama));
+
+        if (chosenTeachers.length === 0) {
+          Toast.show('Data santri untuk guru terpilih tidak ditemukan.', 'warning');
+          return;
+        }
+
+        const datePrinted = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+        const sectionsHtml = chosenTeachers.map((teacher, tIdx) => {
+          const rowsHtml = teacher.students.map((s, i) => `
+            <tr>
+              <td class="col-no">${i + 1}</td>
+              <td class="col-name">
+                <div class="s-name">${escapeHtml(s.nama)}</div>
+                <div class="s-meta">${escapeHtml(s.kelas)} · Ruang ${escapeHtml(s.ruang)}</div>
+              </td>
+              <td class="col-date">${escapeHtml(s.jadwal)}</td>
+              <td class="col-time">${escapeHtml(s.waktu)}</td>
+              <td class="col-hp">${escapeHtml(s.hp)}</td>
+              <td class="col-sign ${i % 2 === 0 ? 'sign-left' : 'sign-right'}">
+                <span class="sign-num">${i + 1}.</span>
+              </td>
+            </tr>
+          `).join('');
+
+          return `
+            <section class="teacher-sheet ${tIdx < chosenTeachers.length - 1 ? 'page-break' : ''}">
+              <div class="sheet-header">
+                <img src="${DataService.LOGO_URL}" class="sheet-logo" onerror="this.style.display='none';" />
+                <div class="sheet-title-wrap">
+                  <div class="sheet-org">SD INTERNATIONAL TAHFIZH QURAN</div>
+                  <h1>DAFTAR HADIR & TANDA TANGAN ORANG TUA UJIAN SANTRI</h1>
+                </div>
+              </div>
+
+              <div class="meta-bar">
+                <div class="meta-item">
+                  <span class="meta-lbl">Dewan Guru Penguji</span>
+                  <span class="meta-val">${escapeHtml(teacher.nama)}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-lbl">Ruang Ujian</span>
+                  <span class="meta-val mono">${escapeHtml(teacher.roomsText)}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-lbl">Total Peserta</span>
+                  <span class="meta-val">${teacher.students.length} Santri</span>
+                </div>
+              </div>
+
+              <table class="attendance-table">
+                <thead>
+                  <tr>
+                    <th style="width:36px;">No</th>
+                    <th>Nama Santri & Kelas</th>
+                    <th style="width:138px;">Hari / Tanggal</th>
+                    <th style="width:98px;">Waktu</th>
+                    <th style="width:105px;">No. HP Wali</th>
+                    <th style="width:148px;">Tanda Tangan Orang Tua</th>
+                  </tr>
+                </thead>
+                <tbody>${rowsHtml}</tbody>
+              </table>
+
+              <div class="sheet-footer">
+                <div class="footer-note">
+                  <strong>Catatan:</strong> Mohon Bapak/Ibu Wali Santri menandatangani kolom tanda tangan sebagai bukti kehadiran & persetujuan ujian ananda.<br/>
+                  Dicetak pada: ${datePrinted}
+                </div>
+                <div class="signature-box">
+                  <div>Mengetahui,</div>
+                  <div class="sig-role">Guru Penguji</div>
+                  <div class="sig-space"></div>
+                  <div class="sig-name">${escapeHtml(teacher.nama)}</div>
+                </div>
+              </div>
+            </section>
+          `;
+        }).join('');
+
+        const win = window.open('', '_blank');
+        if (!win) {
+          Toast.show('Popup diblokir browser. Izinkan popup untuk mencetak.', 'warning');
+          return;
+        }
+
+        const docTitle = chosenTeachers.length === 1
+          ? `Absen Ujian — ${chosenTeachers[0].nama}`
+          : `Absen Ujian — ${chosenTeachers.length} Guru Penguji`;
+
+        win.document.write(`<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><title>${escapeHtml(docTitle)}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', system-ui, Arial, sans-serif; background:#e2e8f0; color:#0f172a; padding:18px; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .toolbar { position:fixed; top:16px; right:16px; display:flex; gap:8px; z-index:99; }
+  .btn { padding:10px 18px; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; box-shadow:0 4px 12px rgba(0,0,0,.15); }
+  .btn-print { background:#059669; color:#fff; }
+  .btn-close { background:#334155; color:#fff; }
+  .teacher-sheet { max-width:210mm; margin:0 auto 24px auto; background:#fff; padding:14mm 14mm 16mm 14mm; border-radius:8px; box-shadow:0 6px 24px rgba(15,23,42,.1); }
+  .page-break { page-break-after:always; }
+  .sheet-header { display:flex; align-items:center; gap:14px; border-bottom:2.5px solid #047857; padding-bottom:10px; margin-bottom:12px; }
+  .sheet-logo { width:48px; height:48px; object-fit:contain; flex-shrink:0; }
+  .sheet-org { font-size:11px; font-weight:800; color:#047857; letter-spacing:0.8px; }
+  .sheet-header h1 { font-size:16px; font-weight:900; color:#0f172a; margin-top:2px; }
+  .meta-bar { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:8px; padding:9px 12px; margin-bottom:14px; }
+  .meta-lbl { display:block; font-size:9px; font-weight:700; text-transform:uppercase; color:#64748b; letter-spacing:0.5px; }
+  .meta-val { display:block; font-size:12.5px; font-weight:800; color:#0f172a; margin-top:2px; }
+  .meta-val.mono { font-family:'Consolas', monospace; color:#047857; }
+  .attendance-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  .attendance-table thead { display:table-header-group; }
+  .attendance-table tr { page-break-inside:avoid; }
+  .attendance-table th { background:#ecfdf5; color:#065f46; border:1.25px solid #047857; padding:8px 6px; text-transform:uppercase; font-size:10px; font-weight:800; letter-spacing:0.3px; }
+  .attendance-table td { border:1px solid #94a3b8; padding:6px 7px; vertical-align:middle; }
+  .attendance-table tbody tr:nth-child(even) { background:#f8fafc; }
+  .col-no { text-align:center; font-weight:700; color:#475569; }
+  .s-name { font-weight:800; color:#0f172a; font-size:11.5px; }
+  .s-meta { font-size:9.5px; color:#64748b; margin-top:1px; }
+  .col-date, .col-time, .col-hp { text-align:center; font-size:10.5px; }
+  .col-time { font-family:'Consolas', monospace; font-weight:700; color:#065f46; }
+  .col-sign { height:40px; position:relative; vertical-align:top; }
+  .sign-num { font-size:9.5px; color:#94a3b8; font-weight:700; }
+  .sign-left { text-align:left; padding-left:8px; }
+  .sign-right { text-align:center; }
+  .sheet-footer { margin-top:18px; display:flex; justify-content:space-between; align-items:flex-end; gap:16px; page-break-inside:avoid; }
+  .footer-note { font-size:10px; color:#475569; line-height:1.5; max-width:62%; }
+  .signature-box { text-align:center; font-size:11px; min-width:170px; }
+  .sig-role { font-weight:700; color:#047857; }
+  .sig-space { height:46px; }
+  .sig-name { font-weight:800; border-top:1.5px solid #0f172a; padding-top:4px; }
+  @media print {
+    body { background:#fff; padding:0; }
+    .toolbar { display:none !important; }
+    .teacher-sheet { max-width:none; margin:0; padding:0; border-radius:0; box-shadow:none; }
+    @page { size:A4 portrait; margin:12mm; }
+  }
+</style></head><body>
+  <div class="toolbar">
+    <button class="btn btn-print" onclick="window.print()">Cetak Sekarang (${chosenTeachers.length} Guru)</button>
+    <button class="btn btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  ${sectionsHtml}
+</body></html>`);
+        win.document.close();
+      },
+
+      printTeacherAttendanceSheet() {
+        if (!this.currentTeacherName || this.currentTeacherStudents.length === 0) {
+          Toast.show('Tidak ada data santri untuk dicetak.', 'warning');
+          return;
+        }
+
+        const rowsHtml = this.currentTeacherStudents.map((s, i) => `
+          <tr>
+            <td style="text-align:center;font-weight:700;">${i + 1}</td>
+            <td style="font-weight:700;">${escapeHtml(s.nama)}<div style="font-size:10px;color:#475569;">${escapeHtml(s.kelas)}</div></td>
+            <td style="text-align:center;">${escapeHtml(s.jadwal)}</td>
+            <td style="text-align:center;">${escapeHtml(s.waktu)}</td>
+            <td style="text-align:center;">${escapeHtml(s.hp)}</td>
+            <td style="height:44px;"></td>
+          </tr>
+        `).join('');
+
+        const datePrinted = new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        const win = window.open('', '_blank');
+        if (!win) {
+          Toast.show('Popup diblokir browser. Izinkan popup untuk mencetak.', 'warning');
+          return;
+        }
+
+        win.document.write(`<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><title>Daftar Hadir Ujian — ${escapeHtml(this.currentTeacherName)}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', Arial, sans-serif; padding:24px; color:#0f172a; }
+  .toolbar { position:fixed; top:16px; right:16px; display:flex; gap:8px; }
+  .btn { padding:10px 18px; border:none; border-radius:10px; font-weight:700; cursor:pointer; font-size:13px; }
+  .btn-print { background:#059669; color:#fff; }
+  .btn-close { background:#334155; color:#fff; }
+  .sheet { max-width:860px; margin:0 auto; }
+  .header { text-align:center; border-bottom:3px solid #047857; padding-bottom:14px; margin-bottom:20px; }
+  .header h1 { font-size:20px; color:#047857; }
+  .header p { font-size:13px; font-weight:600; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th { background:#ecfdf5; color:#065f46; border:1.5px solid #047857; padding:10px 8px; text-transform:uppercase; font-size:11px; }
+  td { border:1.5px solid #94a3b8; padding:8px; }
+  .footer { margin-top:24px; font-size:11px; color:#475569; text-align:center; }
+  @media print { .toolbar { display:none !important; } body { padding:0; } @page { size:A4 portrait; margin:12mm; } }
+</style></head><body>
+  <div class="toolbar">
+    <button class="btn btn-print" onclick="window.print()">Cetak Daftar</button>
+    <button class="btn btn-close" onclick="window.close()">Tutup</button>
+  </div>
+  <div class="sheet">
+    <div class="header">
+      <h1>DAFTAR PESERTA & TANDA TANGAN UJIAN SANTRI</h1>
+      <p>SD International Tahfizh Quran · Guru Penguji: <strong>${escapeHtml(this.currentTeacherName)}</strong></p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px;">No</th>
+          <th>Nama Santri</th>
+          <th style="width:140px;">Tanggal Ujian</th>
+          <th style="width:110px;">Waktu</th>
+          <th style="width:115px;">No HP</th>
+          <th style="width:150px;">Tanda Tangan Wali</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <div class="footer">Dicetak pada ${datePrinted}</div>
+  </div>
+</body></html>`);
+        win.document.close();
+      },
+
+      /* ---------------- Admin Modal ---------------- */
+      openAdminModal() {
+        SoundEngine.click();
+        const saved = DataService.getCustomMessage();
+        document.getElementById('adminMessageInput').value = saved || DataService.DEFAULT_MESSAGE;
+        document.getElementById('adminStatusPreview').textContent = saved
+          ? `Menggunakan pesan kustom:\n${saved}`
+          : 'Menggunakan pesan standar bawaan sistem.';
+        document.getElementById('adminModal').classList.remove('hidden');
+      },
+
+      closeAdminModal() {
+        document.getElementById('adminModal').classList.add('hidden');
+      },
+
+      /* ---------------- Photo Lightbox ---------------- */
+      openPhotoLightbox(url, caption) {
+        SoundEngine.pop();
+        document.getElementById('photoModalImg').src = url;
+        document.getElementById('photoModalCaption').textContent = caption;
+        document.getElementById('photoModal').classList.remove('hidden');
+      },
+
+      closePhotoLightbox() {
+        document.getElementById('photoModal').classList.add('hidden');
+      },
+
+      /* ---------------- Event Bindings ---------------- */
+      bindEvents() {
+        // Brand home button
+        document.getElementById('brandHomeBtn').addEventListener('click', () => this.switchTab('search'));
+        document.getElementById('breadcrumbHome').addEventListener('click', () => this.switchTab('search'));
+
+        // Desktop & Mobile Tabs
+        document.querySelectorAll('.nav-tab, .mobile-nav-tab').forEach(btn => {
+          btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
+        });
+
+        // Bento quick navigation cards
+        document.getElementById('cardGoTeachers').addEventListener('click', () => this.switchTab('teachers'));
+        document.getElementById('cardGoMap').addEventListener('click', () => this.switchTab('map'));
+
+        // Theme & Sound toggles
+        document.getElementById('themeToggleBtn').addEventListener('click', () => this.toggleTheme());
+        document.getElementById('soundToggleBtn').addEventListener('click', () => {
+          const isOn = SoundEngine.toggle();
+          this.initSoundUI();
+          Toast.show(isOn ? 'Efek suara mikro aktif' : 'Efek suara mikro dimatikan', 'info', 2000);
+        });
+
+        // Manual refresh & retry
+        document.getElementById('manualRefreshBtn').addEventListener('click', () => {
+          SoundEngine.click();
+          this.loadData(true);
+        });
+        document.getElementById('retryFetchBtn').addEventListener('click', () => {
+          SoundEngine.click();
+          this.loadData(true);
+        });
+
+        // Search input + keyboard shortcuts
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => this.handleSearchInput(e.target.value));
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.highlightSuggestion(this.suggestionIndex + 1);
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.highlightSuggestion(this.suggestionIndex - 1);
+          } else if (e.key === 'Enter' && this.suggestionIndex >= 0 && this.activeSuggestions[this.suggestionIndex]) {
+            e.preventDefault();
+            this.openStudentDetail(this.activeSuggestions[this.suggestionIndex]);
+          } else if (e.key === 'Escape') {
+            document.getElementById('suggestionsList').classList.add('hidden');
+          }
+        });
+
+        document.getElementById('clearSearchBtn').addEventListener('click', () => {
+          searchInput.value = '';
+          this.handleSearchInput('');
+          searchInput.focus();
+        });
+
+        // Global Ctrl+K / Cmd+K Command Palette Shortcut
+        document.addEventListener('keydown', (e) => {
+          if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            this.switchTab('search');
+            setTimeout(() => searchInput.focus(), 50);
+          } else if (e.key === 'Escape') {
+            this.closePrintModal();
+            this.closeTeacherPrintModal();
+            this.closeAdminModal();
+            this.closePhotoLightbox();
+          }
+        });
+        // Print Modal events (with Class Filter)
+        document.getElementById('openPrintModalBtn').addEventListener('click', () => this.openPrintModal());
+        document.getElementById('closePrintModalBtn').addEventListener('click', () => this.closePrintModal());
+        document.getElementById('cancelPrintModalBtn').addEventListener('click', () => this.closePrintModal());
+        document.getElementById('printClassFilter').addEventListener('change', (e) => {
+          this.printClassFilterValue = e.target.value;
+          SoundEngine.click();
+          this.renderPrintChecklist();
+        });
+        document.getElementById('printSearchInput').addEventListener('input', () => this.renderPrintChecklist());
+        document.getElementById('selectAllPrintBtn').addEventListener('click', () => {
+          this.getFilteredPrintStudents().forEach(s => this.selectedPrintIds.add(s.id));
+          SoundEngine.pop();
+          this.renderPrintChecklist();
+        });
+        document.getElementById('deselectFilteredPrintBtn').addEventListener('click', () => {
+          this.getFilteredPrintStudents().forEach(s => this.selectedPrintIds.delete(s.id));
+          SoundEngine.soft();
+          this.renderPrintChecklist();
+        });
+        document.getElementById('deselectAllPrintBtn').addEventListener('click', () => {
+          this.selectedPrintIds.clear();
+          SoundEngine.soft();
+          this.renderPrintChecklist();
+        });
+        document.getElementById('confirmBatchPrintBtn').addEventListener('click', () => {
+          const chosen = this.students.filter(s => this.selectedPrintIds.has(s.id));
+          this.printStudentCards(chosen);
+          if (chosen.length > 0) this.closePrintModal();
+        });
+
+        // Batch Teacher Attendance Print Modal events
+        document.getElementById('openBatchTeacherPrintBtn').addEventListener('click', () => this.openTeacherPrintModal());
+        document.getElementById('closeTeacherPrintModalBtn').addEventListener('click', () => this.closeTeacherPrintModal());
+        document.getElementById('cancelTeacherPrintModalBtn').addEventListener('click', () => this.closeTeacherPrintModal());
+        document.getElementById('teacherPrintSearchInput').addEventListener('input', () => this.renderTeacherPrintChecklist());
+        document.getElementById('selectAllTeachersPrintBtn').addEventListener('click', () => {
+          const q = (document.getElementById('teacherPrintSearchInput').value || '').toLowerCase().trim();
+          this.getAllTeachersSummary().forEach(t => {
+            if (!q || t.nama.toLowerCase().includes(q) || t.roomsText.toLowerCase().includes(q)) {
+              this.selectedTeacherPrintNames.add(t.nama);
+            }
+          });
+          SoundEngine.pop();
+          this.renderTeacherPrintChecklist();
+        });
+        document.getElementById('deselectAllTeachersPrintBtn').addEventListener('click', () => {
+          this.selectedTeacherPrintNames.clear();
+          SoundEngine.soft();
+          this.renderTeacherPrintChecklist();
+        });
+        document.getElementById('confirmBatchTeacherPrintBtn').addEventListener('click', () => {
+          const selectedNames = Array.from(this.selectedTeacherPrintNames);
+          this.printTeacherSheets(selectedNames);
+          if (selectedNames.length > 0) this.closeTeacherPrintModal();
+        });
+
+        // Class browse close
+        document.getElementById('closeClassBrowseBtn').addEventListener('click', () => {
+          document.getElementById('classBrowseSection').classList.add('hidden');
+        });
+
+        // Student Detail actions
+        document.getElementById('backFromDetailBtn').addEventListener('click', () => this.switchTab('search'));
+        document.getElementById('copyScheduleBtn').addEventListener('click', () => {
+          if (!this.currentStudent) return;
+          const s = this.currentStudent;
+          const summary = `Jadwal Ujian Santri — SD International Tahfizh Quran\nNama: ${s.nama}\nKelas: ${s.kelas}\nTanggal: ${s.jadwal}\nWaktu: ${s.waktu}\nRuang: ${s.ruang}\nGuru Penguji: ${s.guru}`;
+          copyTextToClipboard(summary);
+        });
+        document.getElementById('printSingleCardBtn').addEventListener('click', () => {
+          if (this.currentStudent) this.printStudentCards([this.currentStudent]);
+        });
+
+        // Teacher Directory & Student filter
+        document.getElementById('teacherFilterInput').addEventListener('input', (e) => {
+          this.renderTeacherDirectory(e.target.value);
+        });
+        document.getElementById('backToTeacherDirectoryBtn').addEventListener('click', () => {
+          SoundEngine.click();
+          document.getElementById('teacherStudentsView').classList.add('hidden');
+          document.getElementById('teacherDirectoryView').classList.remove('hidden');
+          document.getElementById('breadcrumbBar').classList.add('hidden');
+        });
+        document.getElementById('teacherStudentSearchInput').addEventListener('input', (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          const filtered = this.currentTeacherStudents.filter(s =>
+            s.nama.toLowerCase().includes(q) || s.kelas.toLowerCase().includes(q) || s.jadwal.toLowerCase().includes(q)
+          );
+          this.renderTeacherStudentRows(filtered);
+        });
+        document.getElementById('printTeacherSheetBtn').addEventListener('click', () => {
+          SoundEngine.click();
+          this.printTeacherAttendanceSheet();
+        });
+
+        // Print Modal events
+        document.getElementById('openPrintModalBtn').addEventListener('click', () => this.openPrintModal());
+        document.getElementById('closePrintModalBtn').addEventListener('click', () => this.closePrintModal());
+        document.getElementById('cancelPrintModalBtn').addEventListener('click', () => this.closePrintModal());
+        document.getElementById('printSearchInput').addEventListener('input', (e) => this.renderPrintChecklist(e.target.value));
+        document.getElementById('selectAllPrintBtn').addEventListener('click', () => {
+          const q = document.getElementById('printSearchInput').value.toLowerCase().trim();
+          this.students.forEach(s => {
+            if (!q || s.nama.toLowerCase().includes(q) || s.kelas.toLowerCase().includes(q) || s.ruang.toLowerCase().includes(q)) {
+              this.selectedPrintIds.add(s.id);
+            }
+          });
+          SoundEngine.pop();
+          this.renderPrintChecklist(q);
+        });
+        document.getElementById('deselectAllPrintBtn').addEventListener('click', () => {
+          this.selectedPrintIds.clear();
+          SoundEngine.soft();
+          this.renderPrintChecklist(document.getElementById('printSearchInput').value);
+        });
+        document.getElementById('confirmBatchPrintBtn').addEventListener('click', () => {
+          const chosen = this.students.filter(s => this.selectedPrintIds.has(s.id));
+          this.printStudentCards(chosen);
+          if (chosen.length > 0) this.closePrintModal();
+        });
+
+        // Admin Modal events
+        document.getElementById('openAdminModalBtn').addEventListener('click', () => this.openAdminModal());
+        document.getElementById('closeAdminModalBtn').addEventListener('click', () => this.closeAdminModal());
+        document.getElementById('cancelAdminModalBtn').addEventListener('click', () => this.closeAdminModal());
+        document.getElementById('saveAdminMsgBtn').addEventListener('click', () => {
+          const val = document.getElementById('adminMessageInput').value.trim();
+          if (!val) {
+            Toast.show('Pesan tidak boleh kosong.', 'warning');
+            return;
+          }
+          DataService.saveCustomMessage(val);
+          Toast.show('Pesan informasi ujian berhasil disimpan!', 'success');
+          this.closeAdminModal();
+          if (this.currentStudent && !document.getElementById('viewDetail').classList.contains('hidden')) {
+            this.openStudentDetail(this.currentStudent);
+          }
+        });
+        document.getElementById('resetAdminMsgBtn').addEventListener('click', () => {
+          DataService.resetCustomMessage();
+          document.getElementById('adminMessageInput').value = DataService.DEFAULT_MESSAGE;
+          document.getElementById('adminStatusPreview').textContent = 'Menggunakan pesan standar bawaan sistem.';
+          Toast.show('Pesan dikembalikan ke pengaturan default.', 'info');
+        });
+
+        // Photo Lightbox close
+        document.getElementById('closePhotoModalBtn').addEventListener('click', () => this.closePhotoLightbox());
+        document.getElementById('photoModal').addEventListener('click', (e) => {
+          if (e.target.id === 'photoModal') this.closePhotoLightbox();
+        });
+
+        // Recalculate tab pill on resize
+        window.addEventListener('resize', () => this.updateTabIndicator());
+      }
+    };
+
+    // Initialize App on DOM Ready
+    window.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+</html>
